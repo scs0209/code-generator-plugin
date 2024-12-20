@@ -8,17 +8,17 @@ cd your-plugin-name
 pnpm i
 ```
 
-Using git clone:
+Or using git clone:
 ```
 git clone https://github.com/planetabhi/figma-plugin-react.git your-plugin-name
 cd your-plugin-name
 pnpm i
 ```
 
-#### Build
+#### Build Your Plugin
 ```
 pnpm build
 ```
 
-#### Import
+#### Import Plugin Manifest
 Import into Figma from `dist/manifest.json`
