@@ -2,6 +2,8 @@
 
 
 ```
+git clone https://github.com/planetabhi/figma-plugin-react.git
+cd figma-plugin-react
 pnpm i
 pnpm build
 ```
