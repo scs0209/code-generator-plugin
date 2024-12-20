@@ -1,0 +1,55 @@
+{
+  "name": "figma-plugin-react",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "dist/canvas.js",
+  "scripts": {
+    "build": "pnpm build:canvas && pnpm build:plugin",
+    "build:canvas": "vite build -c ./vite.config.canvas.ts",
+    "build:plugin": "vite build -c ./vite.config.plugin.ts",
+    "dev": "concurrently \"pnpm build:canvas --watch\" \"pnpm build:plugin --watch\"",
+    "lint": "pnpm lint:js",
+    "lint:js": "eslint --quiet --fix"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/planetabhi/figma-plugin-react.git"
+  },
+  "keywords": [
+    "figma",
+    "plugin",
+    "react"
+  ],
+  "author": "@planetabhi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/planetabhi/figma-plugin-react/issues"
+  },
+  "homepage": "https://github.com/planetabhi/figma-plugin-react#readme",
+  "dependencies": {
+    "react": "19.0.0",
+    "react-dom": "19.0.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.17.0",
+    "@figma/plugin-typings": "1.106.0",
+    "@rollup/plugin-replace": "^6.0.2",
+    "@types/node": "22.10.2",
+    "@types/react": "19.0.2",
+    "@types/react-dom": "19.0.2",
+    "@typescript-eslint/eslint-plugin": "8.18.1",
+    "@typescript-eslint/parser": "8.18.1",
+    "@vitejs/plugin-react": "4.3.4",
+    "concurrently": "9.1.0",
+    "esbuild": "^0.24.1",
+    "eslint": "9.17.0",
+    "eslint-plugin-jsx-a11y": "6.10.2",
+    "eslint-plugin-react": "7.37.2",
+    "eslint-plugin-react-hooks": "5.1.0",
+    "sass-embedded": "^1.83.0",
+    "typescript": "5.7.2",
+    "vite": "5.4.11",
+    "vite-plugin-generate-file": "0.2.0",
+    "vite-plugin-singlefile": "2.1.0"
+  }
+}
