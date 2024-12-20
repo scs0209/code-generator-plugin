@@ -7,7 +7,7 @@ type ShapeType = 'RECTANGLE' | 'ELLIPSE';
 const ShapeGenerator = () => {
   const [numberOfShapes, setNumberOfShapes] = useState(5);
   const [shapeType, setShapeType] = useState<ShapeType>('RECTANGLE');
-  const [color, setColor] = useState('#FF8000');  // Default orange color
+  const [color, setColor] = useState('#0B99FF');
 
   const shapeTypes: ShapeType[] = ['RECTANGLE', 'ELLIPSE'];
 
