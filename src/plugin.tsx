@@ -7,7 +7,7 @@ type ShapeType = 'RECTANGLE' | 'ELLIPSE';
 const ShapeGenerator = () => {
   const [numberOfShapes, setNumberOfShapes] = useState(5);
   const [shapeType, setShapeType] = useState<ShapeType>('RECTANGLE');
-  const [color, setColor] = useState('#0B99FF');
+  const [color, setColor] = useState('#ffcd75');
 
   const shapeTypes: ShapeType[] = ['RECTANGLE', 'ELLIPSE'];
 
@@ -28,10 +28,11 @@ const ShapeGenerator = () => {
   };
 
   return (
-    <div className="">
-      <div className="">
+    <div>
+      <div>
+
         <div>
-          <label className="">
+          <label>
             Number of Shapes
           </label>
           <input
@@ -40,18 +41,16 @@ const ShapeGenerator = () => {
             max="10"
             value={numberOfShapes}
             onChange={(e) => setNumberOfShapes(Number(e.target.value))}
-            className=""
           />
         </div>
 
         <div>
-          <label className="">
+          <label>
             Shape Type
           </label>
           <select
             value={shapeType}
             onChange={(e) => setShapeType(e.target.value as ShapeType)}
-            className=""
           >
             {shapeTypes.map(type => (
               <option key={type} value={type}>
@@ -62,24 +61,23 @@ const ShapeGenerator = () => {
         </div>
 
         <div>
-          <label className="">
-            Color
+          <label>
+            Shape Color
           </label>
           <input
             type="color"
             value={color}
             onChange={(e) => setColor(e.target.value)}
-            className=""
           />
         </div>
       </div>
 
       <button
         onClick={handleGenerateShapes}
-        className=""
       >
-        Generate Shapes
+        Generate
       </button>
+
     </div>
   );
 };

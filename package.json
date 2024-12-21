@@ -1,6 +1,7 @@
 {
   "name": "figma-plugin-react",
-  "version": "1.0.1",
+  "version": "1.0.2",
+  "description": "Figma plugin starter with React, Vite, and SCSS.",
   "type": "module",
   "main": "dist/canvas.js",
   "scripts": {
@@ -42,7 +43,7 @@
     "@typescript-eslint/parser": "8.18.1",
     "@vitejs/plugin-react": "4.3.4",
     "concurrently": "9.1.0",
-    "esbuild": "^0.24.1",
+    "esbuild": "^0.24.2",
     "eslint": "9.17.0",
     "eslint-plugin-jsx-a11y": "6.10.2",
     "eslint-plugin-react": "7.37.2",

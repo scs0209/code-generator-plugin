@@ -2,11 +2,12 @@
 
 export default {
   name: "Figma Plugin React",
-  id: "1451563571813291845",
+  id: "0000000000000000000",
   api: "1.0.0",
+  editorType: ["figma", "figjam"],
   main: "./canvas.js",
   ui: "./plugin.html",
-  editorType: ["figma", "figjam"],
+  documentAccess: "dynamic-page",
   networkAccess: {
     allowedDomains: ["none"],
   },
