@@ -11,7 +11,7 @@ interface GenerateShapesMessage {
 
 type PluginMessage = GenerateShapesMessage;
 
-figma.showUI(__html__, { height: 400, themeColors: true });
+figma.showUI(__html__, { themeColors: true, width: 280, height: 256 });
 
 figma.ui.onmessage = (msg: PluginMessage) => {
   if (msg.type === 'generate-shapes') {

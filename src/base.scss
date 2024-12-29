@@ -1,3 +1,7 @@
+/* CSS Variables & Theming: https://www.figma.com/plugin-docs/css-variables/ */
+
+@use "@new-ui/reset";
+
 :root {
   font-size: 16px;
   --system-ui: "Inter", system-ui, sans-serif;
@@ -14,7 +18,7 @@ body {
   font-weight: 400;
   font-size: 0.75rem;
   font-style: normal;
-  margin: 6vw;
+  margin: 4vw;
 }
 
 label {
