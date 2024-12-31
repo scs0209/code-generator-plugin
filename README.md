@@ -39,9 +39,9 @@ Import into Figma from `dist/manifest.json`
 ```bash
 .
 ├── src
-│   ├── assets/           # Static assets (images, icons, etc.)
+│   ├── assets/           # Static assets
 │   ├── components/       # Reusable React components
-│   ├── styles/           # Global styles (SCSS)
+│   ├── styles/           # Global SCSS
 │   ├── types/            # TypeScript types/interfaces
 │   ├── utils/            # Utility functions/helpers
 │   ├── canvas.ts         # Figma canvas logic
