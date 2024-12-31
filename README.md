@@ -3,14 +3,14 @@ Figma plugin starter with React, Vite, and SCSS.
 
 ### Install
 Using `degit`:
-```
+```bash
 npx degit planetabhi/figma-plugin-react your-plugin-name
 cd your-plugin-name
 pnpm i
 ```
 
 Or using `git clone`:
-```
+```bash
 git clone https://github.com/planetabhi/figma-plugin-react.git your-plugin-name
 cd your-plugin-name
 pnpm i
@@ -26,7 +26,7 @@ export default {
 ```
 
 Run the build
-```
+```bash
 pnpm build
 ```
 
@@ -35,15 +35,25 @@ Import into Figma from `dist/manifest.json`
 
 ---
 
-### Folder Structure
+### Structure
 ```bash
-src/
-├── assets/              # Static assets (images, icons, etc.)
-├── components/          # Reusable React components
-├── styles/              # Global styles (SCSS)
-├── types/               # TypeScript types/interfaces
-├── utils/               # Utility functions/helpers
-├── canvas.ts            # Figma canvas logic
-├── plugin.html          # HTML entry point
-└── plugin.tsx           # React entry point
+.
+├── src
+│   ├── assets/           # Static assets (images, icons, etc.)
+│   ├── components/       # Reusable React components
+│   ├── styles/           # Global styles (SCSS)
+│   ├── types/            # TypeScript types/interfaces
+│   ├── utils/            # Utility functions/helpers
+│   ├── canvas.ts         # Figma canvas logic
+│   ├── plugin.html       # HTML entry point
+│   └── plugin.tsx        # React entry point
+├── .eslintrc.json
+├── .gitignore
+├── eslint.config.js
+├── manifest.ts
+├── package.json
+├── README.md
+├── tsconfig.json
+├── vite.config.canvas.ts
+└── vite.config.plugin.ts
 ```
