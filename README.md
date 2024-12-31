@@ -40,10 +40,10 @@ Import into Figma from `dist/manifest.json`
 .
 ├── src
 │   ├── assets/           # Static assets
-│   ├── components/       # Reusable React components
+│   ├── components/       # Reusable components
 │   ├── styles/           # Global SCSS
-│   ├── types/            # TypeScript types/interfaces
-│   ├── utils/            # Utility functions/helpers
+│   ├── types/            # Types/interfaces
+│   ├── utils/            # Functions/helpers
 │   ├── canvas.ts         # Figma canvas logic
 │   ├── plugin.html       # HTML entry point
 │   └── plugin.tsx        # React entry point
