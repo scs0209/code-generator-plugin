@@ -13,7 +13,12 @@
     "rootDir": "./src",
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
-    "typeRoots": ["./node_modules/@types", "./node_modules/@figma"]
+    "typeRoots": ["./node_modules/@types", "./node_modules/@figma"],
+    "paths": {
+      "@/*": ["./*"],
+      "@/types/*": ["./types/*"],
+      "@/utils/*": ["./utils/*"]
+    }
   },
   "include": ["src/**/*"],
   "exclude": ["dist"]

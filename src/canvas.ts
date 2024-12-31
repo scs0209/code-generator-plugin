@@ -1,10 +1,7 @@
+/* This is a placeholder canvas logic. Replace this logic with your own when building your plugin. */
+
 import { PluginMessage } from './types/messages';
 figma.showUI(__html__, { themeColors: true, width: 280, height: 272 });
-
-// =============================================
-// CANVAS LOGIC
-// Replace this logic with your own when building your plugin.
-// =============================================
 
 figma.ui.onmessage = (msg: PluginMessage) => {
   if (msg.type === 'generate-shapes') {

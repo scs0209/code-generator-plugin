@@ -6,7 +6,6 @@ import { viteSingleFile } from "vite-plugin-singlefile";
 import figmaManifest from "./manifest";
 import replace from "@rollup/plugin-replace";
 
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -39,9 +38,9 @@ export default defineConfig(({ mode }) => ({
   },
   resolve: {
     alias: {
-      services: path.resolve(__dirname, "src/services"),
-      utilities: path.resolve(__dirname, "src/utilities"),
-      types: path.resolve(__dirname, "src/types"),
+      "@services": path.resolve(__dirname, "src/services"),
+      "@utils": path.resolve(__dirname, "src/utils"),
+      "@types": path.resolve(__dirname, "src/types"),
     },
   },
 }));

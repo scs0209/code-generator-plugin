@@ -1,3 +1,5 @@
+export type ShapeType = 'RECTANGLE' | 'ELLIPSE';
+
 export interface GenerateShapesMessage {
     type: 'generate-shapes';
     numberOfShapes: number;
@@ -10,4 +12,3 @@ export interface GenerateShapesMessage {
 }
   
 export type PluginMessage = GenerateShapesMessage;
-export type ShapeType = 'RECTANGLE' | 'ELLIPSE';

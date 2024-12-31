@@ -1,11 +1,11 @@
-import { defineConfig } from "vite";
+import { defineConfig, ConfigEnv, UserConfig } from "vite";
 import path from "node:path";
 import { viteSingleFile } from "vite-plugin-singlefile";
 import react from "@vitejs/plugin-react";
 import replace from "@rollup/plugin-replace";
-import sass from 'sass-embedded';
+import * as sass from "sass-embedded";
 
-export default defineConfig(({ mode }) => ({
+export default defineConfig(({ mode }: ConfigEnv): UserConfig => ({
   plugins: [
     react(),
     viteSingleFile({
@@ -19,9 +19,7 @@ export default defineConfig(({ mode }) => ({
   ],
   css: {
     preprocessorOptions: {
-      scss: {
-        implementation: sass,
-      },
+      scss: {},
     },
   },
   root: path.resolve(__dirname, "src"),
@@ -41,8 +39,7 @@ export default defineConfig(({ mode }) => ({
   },
   resolve: {
     alias: {
-      services: path.resolve(__dirname, "src/services"),
-      utilities: path.resolve(__dirname, "src/utilities"),
+      "@": path.resolve(__dirname, "src"),
     },
   },
 }));

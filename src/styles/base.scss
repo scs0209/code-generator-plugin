@@ -1,8 +1,4 @@
-// =============================================
-// BASE STYLES
-// Replace these styles with your own when building your plugin.
-// Figma Variables: https://www.figma.com/plugin-docs/css-variables/
-// =============================================
+/* Replace these styles with your own when building your plugin. */
 
 @use "./_variables" as *;
 @use "./_reset";
@@ -40,6 +36,7 @@ select {
 
   &:focus {
     border-color: var(--figma-color-bg-brand);
+    box-shadow: 0 0 0 0.0625rem var(--figma-color-bg-brand);
   }
 }
 
@@ -97,6 +94,7 @@ button {
   color: var(--figma-color-text-onbrand);
   border: unset;
   outline-color: transparent;
+  border: 0.0625rem solid transparent;
   border-radius: 0.375rem;
   font-size: 0.6875rem;
   line-height: 1rem;
@@ -113,5 +111,10 @@ button {
 
   &:active:not(:disabled) {
     background: var(--figma-color-bg-brand-pressed);
+  }
+
+  &:focus {
+    border-color: var(--figma-color-bg-brand);
+    box-shadow: 0 0 0 0.0625rem var(--figma-color-bg-brand);
   }
 }
