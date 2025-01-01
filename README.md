@@ -35,18 +35,18 @@ Import into Figma from `dist/manifest.json`
 
 ---
 
-### Structure
+### Plugin Structure
 ```bash
 .
 ├── src
-│   ├── assets/           # Static assets
-│   ├── components/       # Reusable components
-│   ├── styles/           # Global SCSS
-│   ├── types/            # Types/interfaces
-│   ├── utils/            # Functions/helpers
+│   ├── assets/
+│   ├── components/       # Reusable React components
+│   ├── styles/           # SCSS/CSS styles
+│   ├── types/            # TypeScript definitions
+│   ├── utils/            # Helper functions and utilities
 │   ├── canvas.ts         # Figma canvas logic
-│   ├── plugin.html       # HTML entry point
-│   └── plugin.tsx        # React entry point
+│   ├── plugin.html       # Entry HTML template
+│   └── plugin.tsx        # Plugin entry point
 ├── .eslintrc.json
 ├── .gitignore
 ├── eslint.config.js
