@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ShapeType } from '@/types/messages';
 import { hexToRgb } from '@/utils/colorUtils';
 
-/* This is a placeholder UI for generating shapes. Replace this with your own UI implementation when building your plugin. */
+// This is a placeholder UI for generating shapes. Replace this with your own UI implementation when building your plugin.
 
 const ShapeGenerator = () => {
   const [numberOfShapes, setNumberOfShapes] = useState(5);
