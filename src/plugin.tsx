@@ -1,12 +1,12 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import ShapeGenerator from './components/ShapeGenerator';
+import DefaultView from './components/DefaultView';
 import './styles/base.scss';
 
-const container = document.getElementById('react-page');
+const container = document.getElementById('root') as HTMLElement;
 if (container) {
   const root = createRoot(container);
-  root.render(<ShapeGenerator />);
+  root.render(<DefaultView />);
 } else {
-  console.error('Container element not found');
+  console.error('Root container not found');
 }
