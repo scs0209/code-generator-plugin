@@ -41,6 +41,8 @@ Import into Figma from `dist/manifest.json`
 ├── src
 │   ├── assets/
 │   ├── components/       # Reusable React components
+│   ├── constants/        # Global config and values
+│   ├── hooks/            # Shared React logic
 │   ├── styles/           # SCSS/CSS styles
 │   ├── types/            # TypeScript definitions
 │   ├── utils/            # Helper functions and utilities

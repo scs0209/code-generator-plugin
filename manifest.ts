@@ -1,5 +1,3 @@
-// https://www.figma.com/plugin-docs/manifest/
-
 export default {
   name: "Figma Plugin React",
   id: "0000000000000000000",
