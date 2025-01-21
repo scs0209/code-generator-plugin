@@ -60,5 +60,5 @@ Import into Figma from `dist/manifest.json`
 └── vite.config.plugin.ts
 ```
 
-### Example
-[Cover Maker](https://github.com/planetabhi/figma-cover-maker) - A simple cover generator for Figma.
+### Examples
+- [Cover Maker](https://github.com/planetabhi/figma-cover-maker) — A simple cover generator for Figma.
