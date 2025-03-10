@@ -61,4 +61,12 @@ Import into Figma from `dist/manifest.json`
 ```
 
 ### Examples
-- [Cover Maker](https://github.com/planetabhi/figma-cover-maker) — A simple cover generator for Figma.
+Below are a few public plugins I built to speed up daily design processes using this starter:
+
+- **[Type Scale](https://www.figma.com/community/plugin/1462790095195108364/type-scale)** — Quickly generate a modular typography scale.
+- **[Typeset](https://www.figma.com/community/plugin/1455117604583415830/typeset)** — Fix cases, quotes, dashes, spaces, and punctuation.
+- **[Get Color Name](https://www.figma.com/community/plugin/1458188952030933252/get-color-name)** — GET the color name instantly.
+- **[Cover Maker](https://www.figma.com/community/plugin/1460274736428830766/cover-maker)** — A cover generator with status, Jira, and YYQQ details.
+- **[Layout Calculator](https://www.figma.com/community/plugin/1454833650234213095/layout-calculator)** — Simplify layout calculations, generate layouts.
+- **[Percentage Calculator](https://www.figma.com/community/plugin/1457235675961983844/percentage-calculator)** — Compute percentages, rates, and base values.
+- **[Piano](https://www.figma.com/community/plugin/1453662299129904150/piano)** — Play piano right in Figma ♪♪♪ ヽ(ˇ∀ˇ )ゞ
