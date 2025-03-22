@@ -61,7 +61,7 @@ Import into Figma from `dist/manifest.json`
 ```
 
 ### Examples
-Below are a few public plugins I built to speed up daily design processes using this starter:
+Plugins built using this starter
 
 - **[Type Scale](https://www.figma.com/community/plugin/1462790095195108364/type-scale)** — Quickly generate a modular typography scale.
 - **[Typeset](https://www.figma.com/community/plugin/1455117604583415830/typeset)** — Fix cases, quotes, dashes, spaces, and punctuation.
