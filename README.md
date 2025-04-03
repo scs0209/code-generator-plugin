@@ -70,3 +70,5 @@ Plugins built using this starter
 - **[Layout Calculator](https://www.figma.com/community/plugin/1454833650234213095/layout-calculator)** — Simplify layout calculations, generate layouts.
 - **[Percentage Calculator](https://www.figma.com/community/plugin/1457235675961983844/percentage-calculator)** — Compute percentages, rates, and base values.
 - **[Piano](https://www.figma.com/community/plugin/1453662299129904150/piano)** — Play piano right in Figma ♪♪♪ ヽ(ˇ∀ˇ )ゞ
+- **[Tree Generator](https://www.figma.com/community/plugin/1484122561413577544/tree-generator)** — Generate a tree structure from the selection.
+- **[Console](https://www.figma.com/@planetabhi)** — `TBA` Control Figma using commands.
