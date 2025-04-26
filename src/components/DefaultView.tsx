@@ -1,15 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import tokens from '../utils/tokens.json';
 import componentLibrary from '../utils/component-library.json';
+import { CodeBlock, dracula } from 'react-code-blocks';
 
 interface ColorTokenMap {
   [key: string]: string;
-}
-
-interface RGB {
-  r: number;
-  g: number;
-  b: number;
 }
 
 interface Token {
@@ -167,24 +162,29 @@ const DefaultView = () => {
         >
           코드 생성
         </button>
-        <textarea
-          value={output}
-          readOnly
+        <div
           style={{
             width: '100%',
             height: '400px',
-            padding: '16px',
             borderRadius: '8px',
             border: '1px solid #e5e7eb',
-            backgroundColor: '#f9fafb',
-            fontFamily: 'monospace',
-            fontSize: '14px',
-            lineHeight: '1.5',
-            resize: 'none',
-            outline: 'none',
-            transition: 'border-color 0.2s',
+            overflow: 'auto',
           }}
-        />
+        >
+          <CodeBlock
+            text={output}
+            language="tsx"
+            theme={dracula}
+            showLineNumbers={true}
+            customStyle={{
+              width: '100%',
+              height: '400px',
+              borderRadius: '8px',
+              border: '1px solid #e5e7eb',
+              overflow: 'auto',
+            }}
+          />
+        </div>
       </div>
     </div>
   );

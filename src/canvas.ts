@@ -26,21 +26,14 @@ function matchComponent(node: SceneNode): string | null {
   if (node.type === 'TEXT') {
     return 'Text';
   }
-  if (
-    node.type === 'FRAME' &&
-    'layoutMode' in node &&
-    node.layoutMode !== 'NONE'
-  ) {
-    return 'StackContainer';
-  }
-  if (
-    node.type === 'FRAME' &&
-    'width' in node &&
-    'height' in node &&
-    node.width > 300 &&
-    node.height > 300
-  ) {
-    return 'Modal';
+  if (node.type === 'FRAME') {
+    const name = node.name.toLowerCase();
+    if (name.includes('modal')) {
+      return 'Modal';
+    }
+    if (name.includes('stack') || name.includes('container')) {
+      return 'StackContainer';
+    }
   }
   return null;
 }
@@ -128,7 +121,9 @@ figma.ui.onmessage = (msg: { type: string }) => {
     console.log(selection[0]);
 
     const node = selection[0];
+    console.log(node);
     const componentName = matchComponent(node);
+    console.log(componentName);
     if (!componentName) {
       figma.ui.postMessage({
         type: 'error',
@@ -138,7 +133,6 @@ figma.ui.onmessage = (msg: { type: string }) => {
     }
 
     const props = extractProps(node, componentName);
-    console.log(props);
     const innerText = 'characters' in node ? node.characters : undefined;
     const code = buildComponentCode(componentName, props, innerText);
 
