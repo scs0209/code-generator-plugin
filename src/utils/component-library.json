@@ -1,0 +1,446 @@
+{
+  "style": "default",
+  "components": {
+    "Modal": {
+      "name": "Modal",
+      "type": "ui",
+      "props": {
+        "height": {
+          "type": "number",
+          "required": false,
+          "description": ""
+        },
+        "outsideClick": {
+          "type": "(args?: any) => void",
+          "required": false,
+          "description": ""
+        },
+        "sizeVar": {
+          "type": "\"XXS\" | \"XS\" | \"S\" | \"M\" | \"L\" | \"XL\" | \"XXL\" | \"XXXL\" | \"FULL\"",
+          "required": false,
+          "description": "모달의 크기를 설정합니다."
+        }
+      },
+      "styles": {
+        "layout": {
+          "height": {
+            "type": "number",
+            "required": false,
+            "values": null
+          }
+        },
+        "sizing": {
+          "height": {
+            "type": "number",
+            "required": false,
+            "values": null
+          }
+        }
+      },
+      "contents": {
+        "title": "Modal",
+        "description": "컨텐츠를 모달 형태로 표시하는 컴포넌트입니다.",
+        "note": "Header, Body, Footer 구조를 제공합니다.",
+        "features": [
+          "다양한 크기 옵션 (XXS부터 XXXL까지)",
+          "스크롤 영역 자동 조절",
+          "헤더/푸터 옵션",
+          "외부 클릭 처리",
+          "반응형 크기 조절"
+        ]
+      },
+      "template": "<ModalContainer\n  sizeVar=\"M\"\n  height={400}\n  outsideClick={() => {}}\n>\n  <ModalHeader>제목</ModalHeader>\n  <ModalBody>\n    컨텐츠 내용\n  </ModalBody>\n  <ModalFooter>\n    <Button>확인</Button>\n  </ModalFooter>\n</ModalContainer>",
+      "variants": {
+        "size": {
+          "type": "string",
+          "default": "M",
+          "values": ["XXS", "XS", "S", "M", "L", "XL", "XXL", "XXXL", "FULL"]
+        }
+      }
+    },
+    "ModalContainer": {
+      "name": "ModalContainer",
+      "type": "ui",
+      "props": {},
+      "styles": {},
+      "contents": {
+        "title": "ModalContainer",
+        "description": "ModalContainer 컴포넌트입니다.",
+        "note": "",
+        "features": []
+      },
+      "template": "<ModalContainer\n  sizeVar=\"M\"\n  height={400}\n  outsideClick={() => {}}\n>\n  <ModalHeader>제목</ModalHeader>\n  <ModalBody>\n    컨텐츠 내용\n  </ModalBody>\n  <ModalFooter>\n    <Button>확인</Button>\n  </ModalFooter>\n</ModalContainer>"
+    },
+    "StackContainer": {
+      "name": "StackContainer",
+      "type": "ui",
+      "props": {
+        "align": {
+          "type": "CSSProperties['alignItems']",
+          "required": false,
+          "description": ""
+        },
+        "justify": {
+          "type": "CSSProperties['justifyContent']",
+          "required": false,
+          "description": ""
+        },
+        "direction": {
+          "type": "CSSProperties['flexDirection']",
+          "required": false,
+          "description": ""
+        },
+        "spacing": {
+          "type": "SpacingTokens",
+          "required": false,
+          "description": ""
+        },
+        "flexWrap": {
+          "type": "CSSProperties['flexWrap']",
+          "required": false,
+          "description": ""
+        },
+        "width": {
+          "type": "CSSProperties['width']",
+          "required": false,
+          "description": ""
+        },
+        "maxWidth": {
+          "type": "CSSProperties['maxWidth']",
+          "required": false,
+          "description": ""
+        },
+        "minWidth": {
+          "type": "CSSProperties['minWidth']",
+          "required": false,
+          "description": ""
+        },
+        "height": {
+          "type": "CSSProperties['height']",
+          "required": false,
+          "description": ""
+        },
+        "maxHeight": {
+          "type": "CSSProperties['maxHeight']",
+          "required": false,
+          "description": ""
+        },
+        "minHeight": {
+          "type": "CSSProperties['minHeight']",
+          "required": false,
+          "description": ""
+        },
+        "padding": {
+          "type": "CSSProperties['padding']",
+          "required": false,
+          "description": ""
+        },
+        "margin": {
+          "type": "CSSProperties['margin']",
+          "required": false,
+          "description": ""
+        },
+        "flex": {
+          "type": "CSSProperties['flex']",
+          "required": false,
+          "description": ""
+        },
+        "background": {
+          "type": "ColorTokens",
+          "required": false,
+          "description": ""
+        },
+        "radius": {
+          "type": "BorderRadiusTokens",
+          "required": false,
+          "description": ""
+        }
+      },
+      "styles": {
+        "layout": {
+          "flexWrap": {
+            "type": "CSSProperties['flexWrap']",
+            "required": false,
+            "values": null
+          },
+          "width": {
+            "type": "CSSProperties['width']",
+            "required": false,
+            "values": null
+          },
+          "maxWidth": {
+            "type": "CSSProperties['maxWidth']",
+            "required": false,
+            "values": null
+          },
+          "minWidth": {
+            "type": "CSSProperties['minWidth']",
+            "required": false,
+            "values": null
+          },
+          "height": {
+            "type": "CSSProperties['height']",
+            "required": false,
+            "values": null
+          },
+          "maxHeight": {
+            "type": "CSSProperties['maxHeight']",
+            "required": false,
+            "values": null
+          },
+          "minHeight": {
+            "type": "CSSProperties['minHeight']",
+            "required": false,
+            "values": null
+          },
+          "padding": {
+            "type": "CSSProperties['padding']",
+            "required": false,
+            "values": null
+          },
+          "margin": {
+            "type": "CSSProperties['margin']",
+            "required": false,
+            "values": null
+          },
+          "flex": {
+            "type": "CSSProperties['flex']",
+            "required": false,
+            "values": null
+          }
+        },
+        "spacing": {
+          "padding": {
+            "type": "CSSProperties['padding']",
+            "required": false,
+            "values": null
+          },
+          "margin": {
+            "type": "CSSProperties['margin']",
+            "required": false,
+            "values": null
+          }
+        },
+        "sizing": {
+          "width": {
+            "type": "CSSProperties['width']",
+            "required": false,
+            "values": null
+          },
+          "maxWidth": {
+            "type": "CSSProperties['maxWidth']",
+            "required": false,
+            "values": null
+          },
+          "minWidth": {
+            "type": "CSSProperties['minWidth']",
+            "required": false,
+            "values": null
+          },
+          "height": {
+            "type": "CSSProperties['height']",
+            "required": false,
+            "values": null
+          },
+          "maxHeight": {
+            "type": "CSSProperties['maxHeight']",
+            "required": false,
+            "values": null
+          },
+          "minHeight": {
+            "type": "CSSProperties['minHeight']",
+            "required": false,
+            "values": null
+          }
+        }
+      },
+      "contents": {
+        "title": "Stack Container",
+        "description": "요소들을 수직 또는 수평으로 쌓을 수 있는 레이아웃 컴포넌트입니다.",
+        "note": "Vertical과 Horizontal 변형을 제공합니다.",
+        "features": [
+          "수직/수평 정렬",
+          "간격 조절",
+          "정렬 방식 설정",
+          "크기 조절",
+          "스크롤 영역 설정"
+        ]
+      },
+      "template": "<StackContainer\n  direction=\"column\"\n  spacing=\"spacing08\"\n  align=\"center\"\n  justify=\"flex-start\"\n>\n  {children}\n</StackContainer>"
+    },
+    "Text": {
+      "name": "Text",
+      "type": "ui",
+      "props": {
+        "typography": {
+          "type": "TypographyTokens",
+          "required": false,
+          "description": ""
+        },
+        "color": {
+          "type": "ColorTokens",
+          "required": false,
+          "description": ""
+        },
+        "lineClamp": {
+          "type": "number",
+          "required": false,
+          "description": ""
+        },
+        "whiteSpace": {
+          "type": "CSSProperties['whiteSpace']",
+          "required": false,
+          "description": ""
+        },
+        "display": {
+          "type": "CSSProperties['display']",
+          "required": false,
+          "description": ""
+        },
+        "textAlign": {
+          "type": "CSSProperties['textAlign']",
+          "required": false,
+          "description": ""
+        },
+        "textOverflow": {
+          "type": "CSSProperties['textOverflow']",
+          "required": false,
+          "description": ""
+        },
+        "textDecorations": {
+          "type": "CSSProperties['textDecoration']",
+          "required": false,
+          "description": ""
+        },
+        "opacity": {
+          "type": "CSSProperties['opacity']",
+          "required": false,
+          "description": ""
+        },
+        "wordBreak": {
+          "type": "CSSProperties['wordBreak']",
+          "required": false,
+          "description": ""
+        }
+      },
+      "styles": {
+        "layout": {
+          "display": {
+            "type": "CSSProperties['display']",
+            "required": false,
+            "values": null
+          }
+        },
+        "typography": {
+          "textAlign": {
+            "type": "CSSProperties['textAlign']",
+            "required": false,
+            "values": null
+          }
+        },
+        "colors": {
+          "color": {
+            "type": "ColorTokens",
+            "required": false,
+            "values": null
+          }
+        },
+        "effects": {
+          "opacity": {
+            "type": "CSSProperties['opacity']",
+            "required": false,
+            "values": null
+          }
+        },
+        "spacing": {
+          "whiteSpace": {
+            "type": "CSSProperties['whiteSpace']",
+            "required": false,
+            "values": null
+          }
+        }
+      },
+      "contents": {
+        "title": "Text",
+        "description": "텍스트를 표시하는 기본 컴포넌트입니다.",
+        "note": "다양한 타이포그래피 스타일과 색상을 지원합니다.",
+        "features": [
+          "타이포그래피 설정",
+          "색상 설정",
+          "줄바꿈 설정",
+          "정렬 설정",
+          "말줄임 설정"
+        ]
+      },
+      "template": "<Text\n  typography=\"body1_400\"\n  color=\"neutral700\"\n  textAlign=\"start\"\n>\n  텍스트 내용\n</Text>"
+    }
+  },
+  "tokens": {
+    "colors": [
+      "coolgray300",
+      "coolgray200",
+      "coolgray100",
+      "coolgray50",
+      "navy400",
+      "navy300",
+      "neutral0",
+      "neutral100",
+      "neutral150",
+      "neutral200",
+      "neutral300",
+      "neutral350",
+      "neutral400",
+      "neutral500",
+      "neutral600",
+      "neutral700",
+      "neutral400_5",
+      "red300",
+      "red200",
+      "red100",
+      "ocean300",
+      "ocean200",
+      "ocean100",
+      "purple400",
+      "purple300",
+      "purple100",
+      "yellow300",
+      "yellow200",
+      "yellow100",
+      "green300",
+      "green200",
+      "green100",
+      "shopl400",
+      "shopl300",
+      "shopl200",
+      "shopl150",
+      "shopl100",
+      "hada400",
+      "hada300",
+      "hada200",
+      "hada150",
+      "hada100"
+    ],
+    "spacing": [
+      "spacing02",
+      "spacing04",
+      "spacing06",
+      "spacing08",
+      "spacing12",
+      "spacing16",
+      "spacing20",
+      "spacing24",
+      "spacing30",
+      "spacing32",
+      "spacing40"
+    ],
+    "borderRadius": [
+      "borderRadius04",
+      "borderRadius06",
+      "borderRadius08",
+      "borderRadius12",
+      "borderRadius16",
+      "borderRadius20"
+    ],
+    "fontWeights": ["regular", "medium", "bold"]
+  }
+}
