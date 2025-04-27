@@ -1,5 +1,6 @@
 // Figma UI 표시
 import tokens from './utils/tokens.json';
+import componentLibrary from './utils/component-library.json';
 
 figma.showUI(__html__, { themeColors: true, width: 256, height: 344 });
 
@@ -131,14 +132,25 @@ function extractProps(
   componentName: string
 ): Record<string, string | number | boolean> {
   const props: Record<string, string | number | boolean> = {};
+  const componentInfo = (componentLibrary as any).components[
+    componentName
+  ] as ComponentInfo;
+
+  if (!componentInfo) return props;
 
   if (componentName === 'Text' && node.type === 'TEXT') {
     // fills가 있고 첫 번째 fill이 solid type인 경우에만 처리
     const fills = node.fills as Paint[];
     if (fills && fills.length > 0 && fills[0].type === 'SOLID') {
-      const colorToken = findColorToken(fills[0].color);
-      // fontSize와 fontWeight가 mixed가 아닌 경우에만 처리
+      // color prop이 정의되어 있는 경우에만 추가
+      if (componentInfo.props.color) {
+        const colorToken = findColorToken(fills[0].color);
+        props.color = colorToken;
+      }
+
+      // typography prop이 정의되어 있는 경우에만 추가
       if (
+        componentInfo.props.typography &&
         typeof node.fontSize === 'number' &&
         typeof node.fontWeight === 'number'
       ) {
@@ -147,22 +159,39 @@ function extractProps(
           node.fontWeight
         );
         props.typography = typographyToken;
-      } else {
-        props.typography = 'body1_400'; // 기본값
       }
-      props.color = colorToken;
-      props.textAlign = node.textAlignHorizontal.toLowerCase();
     }
   }
 
   if (componentName === 'StackContainer' && node.type === 'FRAME') {
-    props.direction = 'vertical';
-    props.spacing = 'spacing08';
-    props.align = 'start';
-    props.justify = 'start';
+    // 각 prop이 정의되어 있는 경우에만 추가
+    if (componentInfo.props.direction) props.direction = 'vertical';
+    if (componentInfo.props.spacing) props.spacing = 'spacing08';
+    if (componentInfo.props.align) props.align = 'start';
+    if (componentInfo.props.justify) props.justify = 'start';
   }
 
   return props;
+}
+
+interface ComponentInfo {
+  name: string;
+  type: string;
+  props: Record<
+    string,
+    {
+      type: string;
+      required: boolean;
+      description: string;
+    }
+  >;
+  template: string;
+  variants?: {
+    size?: {
+      default: string;
+      values: string[];
+    };
+  };
 }
 
 // 컴포넌트 코드 생성
@@ -171,8 +200,12 @@ function buildComponentCode(
   props: Record<string, string | number | boolean>,
   innerText?: string
 ): string {
-  let propsString = '';
+  const componentInfo = (componentLibrary as any).components[
+    componentName
+  ] as ComponentInfo;
+  if (!componentInfo) return '';
 
+  let propsString = '';
   for (const key in props) {
     const value = props[key];
     if (typeof value === 'string') {
@@ -182,18 +215,23 @@ function buildComponentCode(
     }
   }
 
-  // 기본 템플릿
-  if (componentName === 'Text') {
-    return `<Text${propsString}>\n  ${innerText || '텍스트 내용'}\n</Text>`;
-  }
-  if (componentName === 'StackContainer') {
-    return `<StackContainer${propsString}>\n  {children}\n</StackContainer>`;
-  }
-  if (componentName === 'Modal') {
-    return `<ModalContainer${propsString}>\n  <ModalHeader>제목</ModalHeader>\n  <ModalBody>\n    컨텐츠 내용\n  </ModalBody>\n  <ModalFooter>\n    <Button>확인</Button>\n  </ModalFooter>\n</ModalContainer>`;
+  // 템플릿에서 태그 시작 부분만 가져오기
+  let code = componentInfo.template;
+  const openingTagMatch = code.match(/<([A-Za-z]+)[^>]*>/);
+  if (!openingTagMatch) return '';
+
+  const tagName = openingTagMatch[1];
+  const restOfTemplate = code.substring(code.indexOf('>'));
+
+  // 새로운 opening 태그 생성
+  code = `<${tagName}${propsString}${restOfTemplate}`;
+
+  // Text 컴포넌트의 경우 내용 대체
+  if (componentName === 'Text' && innerText) {
+    code = code.replace(/텍스트 내용/, innerText);
   }
 
-  return '';
+  return code;
 }
 
 // UI에서 오는 메시지를 처리하는 핸들러
