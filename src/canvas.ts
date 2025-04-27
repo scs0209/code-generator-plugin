@@ -28,39 +28,6 @@ function matchComponent(node: SceneNode): string {
   return 'StackContainer';
 }
 
-interface ColorToken {
-  value: string;
-  type: 'color';
-}
-
-interface TypographyValue {
-  fontFamily: string;
-  fontWeight: string;
-  lineHeight: string;
-  fontSize: string;
-}
-
-interface TypographyToken {
-  value: TypographyValue;
-  type: 'typography';
-}
-
-interface TokenCategory {
-  [key: string]: ColorToken | TypographyToken | { value: string; type: string };
-}
-
-interface TokensData {
-  shoplflow: {
-    [key: string]: TokenCategory;
-  };
-  shopl: TokenCategory;
-  hada: TokenCategory;
-  $themes: never[];
-  $metadata: {
-    tokenSetOrder: string[];
-  };
-}
-
 // 폰트 사이즈 ➔ typography 토큰 매핑
 function findTypographyToken(fontSize: number, fontWeight: number): string {
   const typographyTokens = (tokens as any).shopl;
@@ -126,6 +93,28 @@ function findColorToken(color: RGB): string {
   return 'neutral700'; // 기본값 - 가장 어두운 텍스트 색상 (#333333)
 }
 
+// width에 따른 Modal sizeVar 매핑
+function getModalSizeVar(width: number): string {
+  const MODAL_SIZE_XXS = 400;
+  const MODAL_SIZE_XS = 500;
+  const MODAL_SIZE_S = 560;
+  const MODAL_SIZE_M = 640;
+  const MODAL_SIZE_L = 768;
+  const MODAL_SIZE_XL = 1040;
+  const MODAL_SIZE_XXL = 1280;
+  const MODAL_SIZE_XXXL = 1600;
+
+  if (width <= MODAL_SIZE_XXS) return 'XXS';
+  if (width <= MODAL_SIZE_XS) return 'XS';
+  if (width <= MODAL_SIZE_S) return 'S';
+  if (width <= MODAL_SIZE_M) return 'M';
+  if (width <= MODAL_SIZE_L) return 'L';
+  if (width <= MODAL_SIZE_XL) return 'XL';
+  if (width <= MODAL_SIZE_XXL) return 'XXL';
+  if (width <= MODAL_SIZE_XXXL) return 'XXXL';
+  return 'FULL';
+}
+
 // Node 정보 ➔ 컴포넌트 props 추출
 function extractProps(
   node: SceneNode,
@@ -169,6 +158,13 @@ function extractProps(
     if (componentInfo.props.spacing) props.spacing = 'spacing08';
     if (componentInfo.props.align) props.align = 'start';
     if (componentInfo.props.justify) props.justify = 'start';
+  }
+
+  // Modal 컴포넌트 처리
+  if (componentName === 'Modal' && node.type === 'FRAME') {
+    if (componentInfo.props.sizeVar) {
+      props.sizeVar = getModalSizeVar(node.width);
+    }
   }
 
   return props;
@@ -215,16 +211,32 @@ function buildComponentCode(
     }
   }
 
-  // 템플릿에서 태그 시작 부분만 가져오기
+  // 템플릿을 줄바꿈으로 분리
   let code = componentInfo.template;
-  const openingTagMatch = code.match(/<([A-Za-z]+)[^>]*>/);
-  if (!openingTagMatch) return '';
+  const lines = code.split('\n');
 
-  const tagName = openingTagMatch[1];
-  const restOfTemplate = code.substring(code.indexOf('>'));
+  // 첫 번째 줄에서 태그 이름만 추출하고 완전히 새로운 opening 태그 생성
+  const tagMatch = lines[0].match(/<([A-Za-z]+)/);
+  if (tagMatch) {
+    const tagName = tagMatch[1];
+    lines[0] = `<${tagName}${propsString}>`;
+  }
 
-  // 새로운 opening 태그 생성
-  code = `<${tagName}${propsString}${restOfTemplate}`;
+  // 두 번째 줄부터 첫 번째 닫는 태그가 나올 때까지 스킵
+  let contentStartIndex = 1;
+  while (
+    contentStartIndex < lines.length &&
+    !lines[contentStartIndex].trim().startsWith('</') &&
+    !lines[contentStartIndex].trim().startsWith('<Modal')
+  ) {
+    contentStartIndex++;
+  }
+
+  // 컴포넌트 내용 부분만 추출
+  const contentLines = lines.slice(contentStartIndex);
+
+  // 최종 코드 조합
+  code = [lines[0], ...contentLines].map((line) => line.trim()).join('\n');
 
   // Text 컴포넌트의 경우 내용 대체
   if (componentName === 'Text' && innerText) {
