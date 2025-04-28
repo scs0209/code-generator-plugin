@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import tokens from '../utils/tokens.json';
-import componentLibrary from '../utils/component-library.json';
 import { CopyBlock, dracula } from 'react-code-blocks';
 import '../index.css';
 
@@ -60,7 +59,6 @@ const DefaultView = () => {
     // 모든 color token을 모은다
     const newColorTokenMap: ColorTokenMap = {};
     const tokensData = tokens as unknown as TokensData;
-    const componentLib = componentLibrary as unknown as ComponentLibrary;
 
     for (const category in tokensData.shoplflow) {
       const group = tokensData.shoplflow[category];
@@ -128,10 +126,20 @@ const DefaultView = () => {
               </button>
               </div>
             <div className="overflow-x-auto">
-                <CopyBlock
+              <CopyBlock
                 text={output}
-                language="tsx"
-                theme={dracula}
+                language="jsx"
+                theme={{
+                  ...dracula,
+                  stringColor: '#98C379',
+                  keywordColor: '#FF79C6',
+                  attributeColor: '#FFB86C',
+                  functionColor: '#00B7FF',
+                  textColor: '#ABB2BF',
+                  backgroundColor: '#282C34',
+                  docTagColor: '#61AFEF',
+                  codeColor: '#61AFEF',
+                }}
                 showLineNumbers={true}
                 codeBlock
                 customStyle={{
@@ -140,7 +148,8 @@ const DefaultView = () => {
                   fontFamily: 'JetBrains Mono, Monaco, Menlo, Consolas, monospace',
                   lineHeight: '1.6',
                   margin: '0',
-                  background: 'rgb(31 41 55)',
+                  background: '#282C34',
+                  color: '#ABB2BF',
                 }}
               />
             </div>
