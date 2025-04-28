@@ -4,14 +4,13 @@ import componentLibrary from './utils/component-library.json';
 
 figma.showUI(__html__, { themeColors: true, width: 256, height: 344 });
 
-// RGB ➔ HEX 변환
-function rgbToHex(r: number, g: number, b: number): string {
-  const toHex = (value: number): string => {
-    const v = Math.round(value * 255).toString(16);
-    return v.length === 1 ? '0' + v : v;
-  };
-  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+function normalizeComponentName(name: string): string {
+  return name
+    .replace(/\s*\/\s*/g, '') // 슬래시와 공백 모두 삭제
+    .replace(/\s+/g, '') // 남은 공백 삭제
+    .replace(/[^a-zA-Z0-9]/g, ''); // 알파벳, 숫자만 허용
 }
+
 
 // Node 타입으로 컴포넌트 매칭
 function matchComponent(node: SceneNode): string {
@@ -24,73 +23,113 @@ function matchComponent(node: SceneNode): string {
       return 'Modal';
     }
   }
+  // if (node.name) {
+  //   return normalizeComponentName(node.name);
+  // }
   // 매칭되는 컴포넌트가 없으면 StackContainer로 처리
   return 'StackContainer';
 }
 
+// RGB ➔ HEX 변환
+function rgbToHex(r: number, g: number, b: number): string {
+  const toHex = (value: number): string => {
+    const v = Math.round(value * 255).toString(16);
+    return v.length === 1 ? '0' + v : v;
+  };
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+}
+
 // 폰트 사이즈 ➔ typography 토큰 매핑
-function findTypographyToken(fontSize: number, fontWeight: number): string {
+export function findTypographyToken(node: any): string {
   const typographyTokens = (tokens as any).shopl;
 
-  // fontSize와 가장 가까운 토큰을 찾음
-  let closestToken = 'body1_400';
-  let minDiff = Infinity;
+
+  // Comparing with token: title1_700 {tokenSize: 18, tokenWeight: '{fontWeight.bold}', tokenFamily: 'Pretendard', tokenLineHeight: 22}
+  // Node typography: {fontSize: 18, fontWeight: 'Bold', fontFamily: 'Pretendard', lineHeightPx: 22}
+  const { fontSize, fontWeight, fontFamily, lineHeightPx } = {
+    fontSize: node.fontSize,
+    fontWeight: `{fontWeight.${node.fontName.style.toLowerCase()}}`,
+    fontFamily: node.fontName.family,
+    lineHeightPx: node.lineHeight.value
+  };
+
+  if (!fontSize || !fontWeight || !fontFamily || !lineHeightPx) {
+    return 'body1_400'; // fallback
+  }
+
+  console.log('Node typography:', { fontSize, fontWeight, fontFamily, lineHeightPx });
 
   for (const [tokenName, token] of Object.entries(typographyTokens)) {
     const typographyToken = token as {
       type: string;
-      value: { fontSize: string; fontWeight: string };
+      value: {
+        fontSize: string;
+        fontWeight: string;
+        fontFamily: string;
+        lineHeight: string;
+      };
     };
+
+    console.log('typographyToken', typographyToken.type);
     if (typographyToken.type === 'typography') {
       const tokenSize = parseFloat(typographyToken.value.fontSize);
-      const tokenWeight = parseInt(typographyToken.value.fontWeight);
+      const tokenWeight = typographyToken.value.fontWeight;
+      const tokenFamily = typographyToken.value.fontFamily;
+      const tokenLineHeight = parseFloat(typographyToken.value.lineHeight);
 
-      // fontSize가 같고 fontWeight가 가장 가까운 것을 선택
-      if (tokenSize === fontSize) {
-        const weightDiff = Math.abs(tokenWeight - fontWeight);
-        if (weightDiff < minDiff) {
-          minDiff = weightDiff;
-          closestToken = tokenName;
-        }
+      console.log('Comparing with token:', tokenName, {
+        tokenSize,
+        tokenWeight,
+        tokenFamily,
+        tokenLineHeight
+      });
+
+      const isFontSizeMatch = tokenSize === fontSize;
+      const isFontWeightMatch = tokenWeight === fontWeight;
+      const isFontFamilyMatch = tokenFamily === fontFamily;
+      const isLineHeightMatch = tokenLineHeight === lineHeightPx;
+
+      if (isFontSizeMatch && isFontWeightMatch && isFontFamilyMatch && isLineHeightMatch) {
+        return tokenName;
       }
     }
   }
 
-  return closestToken;
+  console.log('No matching typography token found');
+  return 'body1_400'; // fallback
 }
 
 // 색상 ➔ color 토큰 매핑
-function findColorToken(color: RGB): string {
+export function findColorToken(color: RGB): string {
   const hexColor = rgbToHex(color.r, color.g, color.b);
 
-  // 모든 색상 토큰을 순회하며 정확히 일치하는 색상 찾기
-  for (const category of [
-    'neutral',
-    'coolgray',
-    'navy',
-    'red',
-    'ocean',
-    'purple',
-    'yellow',
-    'green',
-    'shopl',
-    'hada',
-  ]) {
-    const categoryTokens = (tokens as any).shoplflow[category];
-    if (categoryTokens) {
-      for (const [tokenName, token] of Object.entries(categoryTokens)) {
-        const colorToken = token as { type: string; value: string };
+  const shoplflowTokens = (tokens as any).shoplflow;
+
+  for (const [groupName, groupTokens] of Object.entries(shoplflowTokens)) {
+    if (typeof groupTokens === 'object' && groupTokens !== null) {
+      for (const [tokenName, tokenValue] of Object.entries(groupTokens as object)) {
+        const colorToken = tokenValue as { type: string; value: string };
         if (
           colorToken.type === 'color' &&
           colorToken.value.toLowerCase() === hexColor.toLowerCase()
         ) {
-          return tokenName;
+          return tokenName; // ✅ token 이름만 반환
         }
       }
     }
   }
 
-  return 'neutral700'; // 기본값 - 가장 어두운 텍스트 색상 (#333333)
+  return 'neutral700'; // 기본값 (예외처리)
+}
+
+export function findRadiusToken(value: number | string): string | null {
+  for (const [key, token] of Object.entries(tokens.shoplflow)) {
+    const radiusToken = token as { value: string };
+    if (key.startsWith('borderRadius') && radiusToken.value === String(value)) {
+      return key;  // ✅ token 이름만
+    }
+  }
+  return null;
 }
 
 // width에 따른 Modal sizeVar 매핑
@@ -139,25 +178,79 @@ function extractProps(
 
       // typography prop이 정의되어 있는 경우에만 추가
       if (
-        componentInfo.props.typography &&
-        typeof node.fontSize === 'number' &&
-        typeof node.fontWeight === 'number'
+        componentInfo.props.typography
       ) {
-        const typographyToken = findTypographyToken(
-          node.fontSize,
-          node.fontWeight
-        );
+        const typographyToken = findTypographyToken(node);
         props.typography = typographyToken;
       }
     }
   }
 
   if (componentName === 'StackContainer' && node.type === 'FRAME') {
-    // 각 prop이 정의되어 있는 경우에만 추가
-    if (componentInfo.props.direction) props.direction = 'vertical';
-    if (componentInfo.props.spacing) props.spacing = 'spacing08';
-    if (componentInfo.props.align) props.align = 'start';
-    if (componentInfo.props.justify) props.justify = 'start';
+    // 레이아웃 관련 props
+    if ('layoutMode' in node) {
+      props.direction = node.layoutMode === 'HORIZONTAL' ? 'row' : 'column';
+      if (node.primaryAxisAlignItems === 'CENTER') props.justify = 'center';
+      else if (node.primaryAxisAlignItems === 'MAX') props.justify = 'flex-end';
+      else if (node.primaryAxisAlignItems === 'SPACE_BETWEEN') props.justify = 'space-between';
+      else props.justify = 'flex-start';
+
+      if (node.counterAxisAlignItems === 'CENTER') props.align = 'center';
+      else if (node.counterAxisAlignItems === 'MAX') props.align = 'flex-end';
+      else props.align = 'flex-start';
+    }
+
+    // 간격 관련 props
+    if ('itemSpacing' in node && node.itemSpacing > 0) {
+      const spacingValue = node.itemSpacing;
+      const spacingTokens = (tokens as any).shoplflow.spacing;
+      
+      // 가장 가까운 spacing 토큰 찾기
+      let closestToken = '';
+      let minDiff = Infinity;
+
+      for (const [tokenName, token] of Object.entries(spacingTokens)) {
+        const tokenValue = parseInt((token as { value: string }).value, 10);
+        const diff = Math.abs(spacingValue - tokenValue);
+        
+        if (diff < minDiff) {
+          minDiff = diff;
+          closestToken = tokenName;
+        }
+      }
+
+      if (closestToken) {
+        props.spacing = closestToken;
+      }
+    }
+
+    // 크기 관련 props
+    if (node.width) props.width = `${Math.round(node.width)}px`;
+    if (node.height) props.height = `${Math.round(node.height)}px`;
+
+    // 패딩 관련 props
+    if ('paddingTop' in node || 'paddingBottom' in node || 'paddingLeft' in node || 'paddingRight' in node) {
+      const top = node.paddingTop || 0;
+      const right = node.paddingRight || 0;
+      const bottom = node.paddingBottom || 0;
+      const left = node.paddingLeft || 0;
+      props.padding = `${top}px ${right}px ${bottom}px ${left}px`;
+    }
+
+    // 배경색 관련 props
+    if ('fills' in node && Array.isArray(node.fills) && node.fills.length > 0) {
+      const fill = node.fills[0];
+      if (fill.type === 'SOLID' && 'color' in fill) {
+        const colorToken = findColorToken(fill.color);
+        if (colorToken) props.background = colorToken;
+      }
+    }
+
+    // border radius 관련 props
+    if ('cornerRadius' in node && typeof node.cornerRadius === 'number' && node.cornerRadius > 0) {
+      const radiusToken = findRadiusToken(node.cornerRadius);
+      if (radiusToken) props.radius = radiusToken;
+    }
   }
 
   // Modal 컴포넌트 처리
@@ -191,11 +284,20 @@ interface ComponentInfo {
 }
 
 // 컴포넌트 코드 생성
-function buildComponentCode(
-  componentName: string,
-  props: Record<string, string | number | boolean>,
-  innerText?: string
-): string {
+function buildComponentRecursive(node: SceneNode): string {
+  const componentName = matchComponent(node);
+  if (!componentName) return '';
+
+  const props = extractProps(node, componentName);
+  console.log('props', props);
+  const innerText = 'characters' in node ? node.characters : undefined;
+
+  let childrenCode = '';
+
+  if ('children' in node && node.children.length > 0) {
+    childrenCode = node.children.map(buildComponentRecursive).join('\n');
+  }
+
   const componentInfo = (componentLibrary as any).components[
     componentName
   ] as ComponentInfo;
@@ -211,46 +313,31 @@ function buildComponentCode(
     }
   }
 
-  // 템플릿을 줄바꿈으로 분리
-  let code = componentInfo.template;
-  const lines = code.split('\n');
+  const openingTag = `<${componentName}${propsString}>`;
+  const closingTag = `</${componentName}>`;
 
-  // 첫 번째 줄에서 태그 이름만 추출하고 완전히 새로운 opening 태그 생성
-  const tagMatch = lines[0].match(/<([A-Za-z]+)/);
-  if (tagMatch) {
-    const tagName = tagMatch[1];
-    lines[0] = `<${tagName}${propsString}>`;
-  }
+  // Text 컴포넌트는 innerText를 넣고, 그 외에는 children 넣기
+  const content = componentName === 'Text' && innerText
+    ? innerText
+    : childrenCode;
 
-  // 두 번째 줄부터 첫 번째 닫는 태그가 나올 때까지 스킵
-  let contentStartIndex = 1;
-  while (
-    contentStartIndex < lines.length &&
-    !lines[contentStartIndex].trim().startsWith('</') &&
-    !lines[contentStartIndex].trim().startsWith('<Modal')
-  ) {
-    contentStartIndex++;
-  }
+  return `${openingTag}
+${indent(content)}
+${closingTag}`;
+}
 
-  // 컴포넌트 내용 부분만 추출
-  const contentLines = lines.slice(contentStartIndex);
-
-  // 최종 코드 조합
-  code = [lines[0], ...contentLines].map((line) => line.trim()).join('\n');
-
-  // Text 컴포넌트의 경우 내용 대체
-  if (componentName === 'Text' && innerText) {
-    code = code.replace(/텍스트 내용/, innerText);
-  }
-
-  return code;
+// 들여쓰기 함수
+function indent(text: string, space: number = 2): string {
+  return text
+    .split('\n')
+    .map((line) => ' '.repeat(space) + line)
+    .join('\n');
 }
 
 // UI에서 오는 메시지를 처리하는 핸들러
 figma.ui.onmessage = (msg: { type: string }) => {
   if (msg.type === 'generate-code') {
     const selection = figma.currentPage.selection;
-    console.log(selection);
     if (selection.length === 0) {
       figma.ui.postMessage({
         type: 'error',
@@ -259,23 +346,8 @@ figma.ui.onmessage = (msg: { type: string }) => {
       return;
     }
 
-    console.log(selection[0]);
-
     const node = selection[0];
-    console.log(node);
-    const componentName = matchComponent(node);
-    console.log(componentName);
-    if (!componentName) {
-      figma.ui.postMessage({
-        type: 'error',
-        message: '매칭되는 컴포넌트를 찾을 수 없습니다.',
-      });
-      return;
-    }
-
-    const props = extractProps(node, componentName);
-    const innerText = 'characters' in node ? node.characters : undefined;
-    const code = buildComponentCode(componentName, props, innerText);
+    const code = buildComponentRecursive(node);
 
     figma.ui.postMessage({
       type: 'code-generated',
