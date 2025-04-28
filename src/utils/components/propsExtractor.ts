@@ -11,7 +11,17 @@ interface FunctionProp {
   value: string;
 }
 
-type PropValue = string | number | boolean | FunctionProp;
+type PropValue = string | number | boolean | FunctionProp | any[];
+
+interface ModalChild {
+  type: string;
+  children: any[];
+}
+
+type ModalProps = Record<string, PropValue> & {
+  sizeVar?: string;
+  children: ModalChild[];
+};
 
 export function extractProps(
   node: SceneNode,
@@ -25,7 +35,7 @@ export function extractProps(
   switch (componentName) {
     case 'Input':
       return extractInputProps(node);
-    case 'Button':  
+    case 'Button':
       return extractButtonProps(node);
     case 'TextArea':
       return extractTextAreaProps(node);
@@ -41,10 +51,41 @@ export function extractProps(
       break;
     case 'Modal':
       if (node.type === 'FRAME') {
-        return extractModalProps(node);
+        const modalProps = extractModalProps(node) as unknown as ModalProps;
+        // Modal의 children을 Header, Body, Footer 구조로 변환
+        if (modalProps.children) {
+          console.log(modalProps.children);
+          modalProps.children = modalProps.children.map((child: ModalChild) => {
+            if (child.type === 'Header') {
+              return {
+                type: 'Modal.Header',
+                children: child.children,
+              };
+            } else if (child.type === 'Body') {
+              return {
+                type: 'Modal.Body',
+                isIncludeHeader: modalProps.children.some(
+                  (c: ModalChild) => c.type === 'Header'
+                ),
+                isIncludeFooter: modalProps.children.some(
+                  (c: ModalChild) => c.type === 'Footer'
+                ),
+                children: child.children,
+              };
+            } else if (child.type === 'Footer') {
+              return {
+                type: 'Modal.Footer',
+                children: child.children,
+              };
+            }
+            return child;
+          });
+        }
+        console.log('modalProps', modalProps);
+        return modalProps;
       }
       break;
   }
 
   return props;
-} 
+}
