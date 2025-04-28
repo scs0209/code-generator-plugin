@@ -49,6 +49,7 @@ export function extractProps(
         return extractStackContainerProps(node);
       }
       break;
+    case 'confirm':
     case 'Modal':
       if (node.type === 'FRAME') {
         const modalProps = extractModalProps(node) as unknown as ModalProps;
