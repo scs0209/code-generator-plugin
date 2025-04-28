@@ -9,8 +9,8 @@ interface FunctionProp {
 type PropValue = string | number | boolean | FunctionProp;
 
 export interface ButtonProps {
-  sizeVar?: 'small' | 'medium' | 'large';
-  styleVar?: 'primary' | 'secondary' | 'tertiary';
+  sizeVar?: 'S' | 'M';
+  styleVar?: 'PRIMARY' | 'SECONDARY' | 'SOLID' | 'GHOST';
   disabled?: boolean;
   loading?: boolean;
   fullWidth?: boolean;
@@ -25,22 +25,22 @@ export function extractButtonProps(node: SceneNode): Record<string, PropValue> {
 
   // Style variant based on name
   if (node.name.toLowerCase().includes('secondary')) {
-    props.styleVar = 'secondary';
-  } else if (node.name.toLowerCase().includes('tertiary')) {
-    props.styleVar = 'tertiary';
+    props.styleVar = 'SECONDARY';
+  } else if (node.name.toLowerCase().includes('ghost')) {
+    props.styleVar = 'GHOST';
+  } else if (node.name.toLowerCase().includes('solid')) {
+    props.styleVar = 'SOLID';
   } else {
-    props.styleVar = 'primary';
+    props.styleVar = 'PRIMARY';
   }
 
   // Size variant based on height
   if ('height' in node) {
     const height = node.height;
     if (height <= 32) {
-      props.sizeVar = 'small';
-    } else if (height <= 40) {
-      props.sizeVar = 'medium';
+      props.sizeVar = 'S';
     } else {
-      props.sizeVar = 'large';
+      props.sizeVar = 'M';
     }
   }
 
