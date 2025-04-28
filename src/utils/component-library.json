@@ -903,6 +903,566 @@
       ]
     },
     "template": "<InputButton\n  width=\"100%\"\n  value=\"\"\n  placeholder=\"입력해주세요\"\n  disabled={false}\n  isSelected={false}\n  isError={false}\n  useClear={true}\n  rightSource={<IconButton sizeVar=\"S\" styleVar=\"GHOST\"><Icon iconSource={CalendarIcon} /></IconButton>}\n  onClick={() => {}}\n  onChange={() => {}}\n  onClear={() => {}}\n/>"
+  },
+  "Button": {
+    "name": "Button",
+    "type": "button",
+    "props": {
+      "styleVar": {
+        "type": "ButtonStyleVariantType",
+        "required": false,
+        "description": "버튼의 스타일을 설정합니다. SOLID를 선택할 경우 color 속성도 지정해주셔야 합니다.",
+        "default": "PRIMARY",
+        "options": ["PRIMARY", "SECONDARY", "SOLID", "GHOST"]
+      },
+      "sizeVar": {
+        "type": "ButtonSizeVariantType",
+        "required": false,
+        "description": "버튼의 사이즈를 선택합니다.",
+        "default": "M",
+        "options": ["S", "M"]
+      },
+      "color": {
+        "type": "ColorTokens",
+        "required": false,
+        "description": "styleVar가 SOLID일 때의 버튼의 배경 색상을 선택합니다."
+      },
+      "as": {
+        "type": "ElementType",
+        "required": false,
+        "description": "컴포넌트의 HTML 요소를 변경할 수 있습니다. (기본값: button)"
+      },
+      "isLoading": {
+        "type": "boolean",
+        "required": false,
+        "description": "Spinner가 노출되는 로딩 상태 여부를 설정합니다.",
+        "default": false
+      },
+      "disabled": {
+        "type": "boolean",
+        "required": false,
+        "description": "버튼의 비활성화 여부를 설정합니다.",
+        "default": false
+      },
+      "lineClamp": {
+        "type": "number",
+        "required": false,
+        "description": "버튼 내부의 콘텐츠를 지정한 줄 수만큼 제한합니다."
+      },
+      "leftSource": {
+        "type": "React.ReactNode",
+        "required": false,
+        "description": "버튼 내부 좌측에 표시될 요소"
+      },
+      "rightSource": {
+        "type": "React.ReactNode",
+        "required": false,
+        "description": "버튼 내부 우측에 표시될 요소"
+      }
+    },
+    "styles": {
+      "button": {
+        "base": {
+          "display": "flex",
+          "alignItems": "center",
+          "justifyContent": "center",
+          "height": "fit-content",
+          "width": "fit-content",
+          "padding": "0 12px",
+          "borderRadius": "6px",
+          "cursor": "pointer"
+        },
+        "size": {
+          "M": {
+            "gap": "4px",
+            "minWidth": "72px",
+            "minHeight": "40px"
+          },
+          "S": {
+            "gap": "2px",
+            "minWidth": "54px",
+            "minHeight": "32px"
+          }
+        },
+        "variant": {
+          "PRIMARY": {
+            "border": "1px solid primary400",
+            "backgroundColor": "primary300",
+            "hover": {
+              "backgroundColor": "primary400"
+            }
+          },
+          "SECONDARY": {
+            "border": "1px solid neutral350",
+            "backgroundColor": "neutral0",
+            "hover": {
+              "backgroundColor": "neutral100"
+            }
+          },
+          "SOLID": {
+            "border": "1px solid [color]_next",
+            "backgroundColor": "[color]",
+            "hover": {
+              "backgroundColor": "[color]_next"
+            }
+          },
+          "GHOST": {
+            "border": "1px solid transparent",
+            "backgroundColor": "transparent",
+            "hover": {
+              "backgroundColor": "neutral400_5"
+            }
+          }
+        }
+      }
+    },
+    "contents": {
+      "title": "Button",
+      "description": "가장 기본적인 형태의 버튼입니다.",
+      "note": [
+        "hover상태의 배경색, border-color는 배경색의 상위 colorToken으로 자동 설정됩니다.",
+        "버튼의 배경색은 기본적으로 styleVar에 따라 지정되어 있습니다. 커스텀하고 싶을 경우 styleVar를 SOLID로 지정하고, color값을 지정해주세요."
+      ],
+      "features": [
+        "다양한 스타일 변형 (PRIMARY, SECONDARY, SOLID, GHOST)",
+        "크기 변형 (S, M)",
+        "로딩 상태",
+        "좌우 요소 추가 가능",
+        "비활성화 상태"
+      ]
+    },
+    "template": "<Button\n  styleVar=\"PRIMARY\"\n  sizeVar=\"M\"\n  disabled={false}\n  isLoading={false}\n  leftSource={<Icon sizeVar=\"XS\" iconSource={EditIcon} />}\n  rightSource={null}\n>\n  버튼\n</Button>"
+  },
+  "IconButton": {
+    "name": "IconButton",
+    "type": "button",
+    "props": {
+      "styleVar": {
+        "type": "IconButtonStyleVariantType",
+        "required": false,
+        "description": "버튼의 스타일을 설정합니다.",
+        "options": ["PRIMARY", "SECONDARY", "SOLID", "GHOST"]
+      },
+      "sizeVar": {
+        "type": "IconButtonSizeVariantType",
+        "required": false,
+        "description": "버튼의 사이즈를 선택합니다.",
+        "options": ["XS", "S", "M"]
+      },
+      "iconSizeVar": {
+        "type": "IconSizeVariantType",
+        "required": false,
+        "description": "아이콘의 크기를 설정합니다.",
+        "options": ["XS", "S", "M"]
+      },
+      "color": {
+        "type": "ColorTokens",
+        "required": false,
+        "description": "버튼의 배경색을 선택합니다.",
+        "default": "primary300"
+      },
+      "as": {
+        "type": "ElementType",
+        "required": false,
+        "description": "컴포넌트의 HTML 요소를 변경할 수 있습니다. (기본값: button)"
+      },
+      "isLoading": {
+        "type": "boolean",
+        "required": false,
+        "description": "Spinner가 노출되는 로딩 상태 여부를 설정합니다.",
+        "default": false
+      },
+      "disabled": {
+        "type": "boolean",
+        "required": false,
+        "description": "버튼의 비활성화 여부를 설정합니다.",
+        "default": false
+      }
+    },
+    "styles": {
+      "button": {
+        "base": {
+          "display": "flex",
+          "flexShrink": 0,
+          "borderRadius": "borderRadius06",
+          "justifyContent": "center",
+          "alignItems": "center",
+          "background": "neutral0",
+          "cursor": "pointer"
+        },
+        "size": {
+          "M": {
+            "width": "40px",
+            "minWidth": "40px",
+            "height": "40px",
+            "minHeight": "40px"
+          },
+          "S": {
+            "width": "32px",
+            "minWidth": "32px",
+            "height": "32px",
+            "minHeight": "32px"
+          },
+          "XS": {
+            "width": "24px",
+            "minWidth": "24px",
+            "height": "24px",
+            "minHeight": "24px"
+          }
+        },
+        "iconSize": {
+          "M": "24px",
+          "S": "20px",
+          "XS": "12px"
+        },
+        "variant": {
+          "PRIMARY": {
+            "background": "primary300",
+            "border": "1px solid primary400",
+            "hover": {
+              "background": "primary400"
+            }
+          },
+          "SECONDARY": {
+            "background": "neutral0",
+            "border": "1px solid neutral350",
+            "hover": {
+              "background": "neutral100"
+            }
+          },
+          "SOLID": {
+            "border": "1px solid [color]_next",
+            "background": "[color]",
+            "hover": {
+              "background": "[color]_next"
+            }
+          },
+          "GHOST": {
+            "border": "1px solid transparent",
+            "background": "transparent",
+            "hover": {
+              "background": "neutral400_5"
+            }
+          }
+        }
+      }
+    },
+    "contents": {
+      "title": "IconButton",
+      "description": "내부에 아이콘 요소가 들어간 버튼입니다.",
+      "note": [
+        "자식 요소로 <Icon> 컴포넌트를 함께 사용해야 합니다.",
+        "hover상태의 배경색, border-color는 배경색의 상위 colorToken으로 자동 설정됩니다."
+      ],
+      "features": [
+        "다양한 스타일 변형 (PRIMARY, SECONDARY, SOLID, GHOST)",
+        "크기 변형 (XS, S, M)",
+        "아이콘 크기 조절",
+        "로딩 상태",
+        "비활성화 상태"
+      ]
+    },
+    "template": "<IconButton\n  styleVar=\"SECONDARY\"\n  sizeVar=\"M\"\n  iconSizeVar=\"M\"\n  disabled={false}\n  isLoading={false}\n>\n  <Icon iconSource={ViewOffIcon} />\n</IconButton>"
+  },
+  "DropdownButton": {
+    "name": "DropdownButton",
+    "type": "button",
+    "props": {
+      "text": {
+        "type": "string",
+        "required": true,
+        "description": "버튼 내부에 들어갈 text를 입력합니다."
+      },
+      "styleVar": {
+        "type": "DropdownButtonStyleVariantType",
+        "required": false,
+        "description": "버튼의 스타일을 설정합니다",
+        "default": "PRIMARY",
+        "options": ["PRIMARY", "SECONDARY"]
+      },
+      "sizeVar": {
+        "type": "DropdownButtonSizeVariantType",
+        "required": false,
+        "description": "버튼의 사이즈를 선택합니다.",
+        "default": "M",
+        "options": ["S", "M"]
+      },
+      "disabled": {
+        "type": "boolean",
+        "required": false,
+        "description": "버튼의 비활성화 여부를 설정합니다.",
+        "default": false
+      },
+      "placement": {
+        "type": "Placement",
+        "required": false,
+        "description": "option list가 노출되는 방향을 설정합니다.",
+        "default": "bottom-end",
+        "options": [
+          "top", "right", "bottom", "left",
+          "top-start", "top-end",
+          "right-start", "right-end",
+          "bottom-start", "bottom-end",
+          "left-start", "left-end"
+        ]
+      },
+      "floatingZIndex": {
+        "type": "number",
+        "required": false,
+        "description": "option list의 z-index값을 설정합니다."
+      }
+    },
+    "styles": {
+      "button": {
+        "base": {
+          "display": "flex",
+          "alignItems": "center",
+          "justifyContent": "center",
+          "gap": "4px"
+        },
+        "variant": {
+          "PRIMARY": {
+            "styleVar": "SOLID",
+            "color": "coolgray50"
+          },
+          "SECONDARY": {
+            "styleVar": "SECONDARY"
+          }
+        }
+      },
+      "arrow": {
+        "display": "flex",
+        "justifyContent": "center",
+        "alignItems": "center",
+        "flexShrink": "0"
+      },
+      "popover": {
+        "base": {
+          "backgroundColor": "neutral0",
+          "borderRadius": "borderRadius06",
+          "boxShadow": "shadow200",
+          "border": "1px solid neutral200"
+        }
+      }
+    },
+    "contents": {
+      "title": "DropdownButton",
+      "description": "화살표를 포함한 버튼으로 2단계의 구체적인 옵션을 제공하는 버튼입니다.",
+      "features": [
+        "다양한 스타일 변형 (PRIMARY, SECONDARY)",
+        "크기 변형 (S, M)",
+        "드롭다운 메뉴",
+        "비활성화 상태",
+        "화살표 애니메이션"
+      ]
+    },
+    "template": "<DropdownButton\n  text=\"Button\"\n  styleVar=\"PRIMARY\"\n  sizeVar=\"M\"\n  disabled={false}\n  placement=\"bottom-end\"\n>\n  <DropdownButton.Menu onClick={() => {}}>\n    <div>Option 1</div>\n  </DropdownButton.Menu>\n  <DropdownButton.Menu onClick={() => {}}>\n    <div>Option 2</div>\n  </DropdownButton.Menu>\n</DropdownButton>"
+  },
+  "SplitButton": {
+    "name": "SplitButton",
+    "type": "button",
+    "props": {
+      "text": {
+        "type": "string",
+        "required": true,
+        "description": "버튼 내부에 들어갈 text를 입력합니다."
+      },
+      "styleVar": {
+        "type": "SplitButtonStyleVariantType",
+        "required": false,
+        "description": "버튼의 스타일을 설정합니다",
+        "default": "PRIMARY",
+        "options": ["PRIMARY", "SECONDARY"]
+      },
+      "sizeVar": {
+        "type": "SplitButtonSizeVariantType",
+        "required": false,
+        "description": "버튼의 사이즈를 선택합니다.",
+        "default": "M",
+        "options": ["S", "M"]
+      },
+      "disabled": {
+        "type": "boolean",
+        "required": false,
+        "description": "버튼의 비활성화 여부를 설정합니다.",
+        "default": false
+      },
+      "placement": {
+        "type": "Placement",
+        "required": false,
+        "description": "option list가 노출되는 방향을 설정합니다.",
+        "default": "bottom-start",
+        "options": [
+          "top", "right", "bottom", "left",
+          "top-start", "top-end",
+          "right-start", "right-end",
+          "bottom-start", "bottom-end",
+          "left-start", "left-end"
+        ]
+      },
+      "floatingZIndex": {
+        "type": "number",
+        "required": false,
+        "description": "option list의 z-index값을 설정합니다."
+      },
+      "lineClamp": {
+        "type": "number",
+        "required": false,
+        "description": "버튼 내부의 콘텐츠를 지정한 줄 수만큼 제한합니다.",
+        "default": 1
+      },
+      "leftSource": {
+        "type": "React.ReactNode",
+        "required": false,
+        "description": "버튼 내부 좌측에 표시될 요소"
+      },
+      "rightSource": {
+        "type": "React.ReactNode",
+        "required": false,
+        "description": "버튼 내부 우측에 표시될 요소"
+      }
+    },
+    "styles": {
+      "button": {
+        "base": {
+          "display": "flex",
+          "alignItems": "center",
+          "justifyContent": "center",
+          "height": "fit-content",
+          "width": "fit-content",
+          "gap": "8px",
+          "padding": "0 12px",
+          "borderRadius": "6px",
+          "cursor": "pointer"
+        },
+        "size": {
+          "M": {
+            "minWidth": "72px",
+            "minHeight": "40px"
+          },
+          "S": {
+            "minWidth": "54px",
+            "minHeight": "32px"
+          }
+        },
+        "variant": {
+          "PRIMARY": {
+            "border": "1px solid primary400",
+            "backgroundColor": "primary300",
+            "hover": {
+              "backgroundColor": "primary400"
+            }
+          },
+          "SECONDARY": {
+            "border": "1px solid neutral350",
+            "backgroundColor": "neutral0",
+            "hover": {
+              "backgroundColor": "neutral100"
+            }
+          }
+        }
+      },
+      "divider": {
+        "height": {
+          "M": "38px",
+          "S": "30px"
+        },
+        "width": "1px",
+        "backgroundColor": {
+          "PRIMARY": "shopl400",
+          "SECONDARY": "neutral350"
+        }
+      },
+      "arrow": {
+        "display": "flex",
+        "justifyContent": "center",
+        "alignItems": "center",
+        "flexShrink": 0
+      }
+    },
+    "contents": {
+      "title": "SplitButton",
+      "description": "좌측 영역과 우측 화살표 영역이 구분된 버튼으로, 기본 동작을 바탕으로 구체적인 옵션을 선택할 수 있는 버튼입니다.",
+      "features": [
+        "다양한 스타일 변형 (PRIMARY, SECONDARY)",
+        "크기 변형 (S, M)",
+        "드롭다운 메뉴",
+        "비활성화 상태",
+        "화살표 애니메이션",
+        "구분선"
+      ]
+    },
+    "template": "<SplitButton\n  text=\"Button\"\n  styleVar=\"PRIMARY\"\n  sizeVar=\"M\"\n  disabled={false}\n  placement=\"bottom-start\"\n  lineClamp={1}\n  leftSource={<div style={{ width: '20px', height: '20px', backgroundColor: 'red100' }} />}\n  rightSource={null}\n>\n  <SplitButton.Menu\n    isSelected={false}\n    leftSource={<div style={{ width: '20px', height: '20px', backgroundColor: 'red100' }} />}\n    onClick={() => {}}\n  >\n    <Text>Option 1</Text>\n  </SplitButton.Menu>\n  <SplitButton.Menu\n    isSelected={false}\n    leftSource={<div style={{ width: '20px', height: '20px', backgroundColor: 'red100' }} />}\n    onClick={() => {}}\n  >\n    <Text>Option 2</Text>\n  </SplitButton.Menu>\n</SplitButton>"
+  },
+  "Callout": {
+    "name": "Callout",
+    "type": "feedback",
+    "props": {
+      "styleVar": {
+        "type": "CalloutType",
+        "required": false,
+        "description": "콜아웃의 스타일을 설정합니다.",
+        "default": "INFORMATION",
+        "options": ["INFORMATION", "ALERT"]
+      }
+    },
+    "styles": {
+      "callout": {
+        "base": {
+          "display": "flex",
+          "justifyContent": "flex-start",
+          "alignItems": "start",
+          "padding": "6px 8px",
+          "gap": "4px",
+          "borderRadius": "borderRadius08"
+        },
+        "variant": {
+          "INFORMATION": {
+            "background": "neutral400_5",
+            "text": {
+              "color": "neutral600"
+            },
+            "icon": {
+              "circle": {
+                "fill": "neutral200"
+              },
+              "path": {
+                "fill": "neutral400"
+              }
+            }
+          },
+          "ALERT": {
+            "background": "red100",
+            "text": {
+              "color": "red300",
+              "alignSelf": "center"
+            },
+            "icon": {
+              "path": {
+                "fill": "red300"
+              }
+            }
+          }
+        }
+      },
+      "icon": {
+        "display": "flex",
+        "height": "20px",
+        "minHeight": "20px",
+        "width": "20px",
+        "minWidth": "20px"
+      }
+    },
+    "contents": {
+      "title": "Callout",
+      "description": "중요한 알림이나 정보를 보여주는 메세지를 나타낼 때 사용합니다.",
+      "features": [
+        "다양한 스타일 변형 (INFORMATION, ALERT)",
+        "아이콘 표시",
+        "텍스트 표시"
+      ]
+    },
+    "template": "<Callout styleVar=\"INFORMATION\">\n  <Callout.Icon iconSource={NoticeIcon} />\n  <Callout.Text>\n    사용 안 함으로 설정할 경우 기존 등록된 게시물을 읽을 수도, 새로운 게시물을 포스팅할 수도 없게 됩니다. (단, 기존 등록된 게시물이 삭제되지는 않습니다.)\n  </Callout.Text>\n</Callout>"
   }
   }
 }

@@ -34,7 +34,7 @@ export function buildComponentRecursive(node: SceneNode): string {
     }
   }
 
-  if (componentName === 'Input') {
+  if (componentName === 'Input' || componentName === 'TextArea') {
     return `<${componentName}${propsString} />`;
   }
 

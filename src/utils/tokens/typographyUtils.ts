@@ -3,9 +3,14 @@ import tokens from '../tokens.json';
 export function findTypographyToken(node: any): string {
   const typographyTokens = (tokens as any).shopl;
 
+
+
   const { fontSize, fontWeight, fontFamily, lineHeightPx } = {
     fontSize: node.fontSize,
-    fontWeight: `{fontWeight.${node.fontName.style.toLowerCase()}}`,
+    fontWeight:
+    node.fontName && node.fontName.style
+      ? `{fontWeight.${node.fontName.style.toLowerCase()}}`
+      : '',
     fontFamily: node.fontName.family,
     lineHeightPx: node.lineHeight.value
   };
