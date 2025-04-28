@@ -9,7 +9,7 @@ interface ModalContent {
 }
 
 interface ModalChild {
-  type: 'Header' | 'Body' | 'Footer';
+  type: 'Modal.Header' | 'Modal.Body' | 'Modal.Footer';
   children: any[];
 }
 
@@ -41,7 +41,12 @@ export function extractModalProps(node: FrameNode): ModalProps {
           .map((grandChild: any) => {
             if (grandChild.type === 'TEXT') {
               const textProps = extractTextProps(grandChild);
-              return { type: 'Text', props: textProps };
+              const props = Object.assign({}, textProps);
+              props.children = grandChild.characters;
+              return { 
+                type: 'Text', 
+                props: props
+              };
             }
             return null;
           })
@@ -53,14 +58,24 @@ export function extractModalProps(node: FrameNode): ModalProps {
           .map((grandChild: any) => {
             if (grandChild.type === 'TEXT') {
               const textProps = extractTextProps(grandChild);
-              return { type: 'Text', props: textProps };
+              const props = Object.assign({}, textProps);
+              props.children = grandChild.characters;
+              return { 
+                type: 'Text', 
+                props: props
+              };
             } else if (grandChild.type === 'FRAME') {
               const stackProps = extractStackContainerProps(grandChild);
               const stackChildren = grandChild.children
                 ? grandChild.children.map((stackChild: any) => {
                     if (stackChild.type === 'TEXT') {
                       const textProps = extractTextProps(stackChild);
-                      return { type: 'Text', props: textProps };
+                      const props = Object.assign({}, textProps);
+                      props.children = stackChild.characters;
+                      return { 
+                        type: 'Text', 
+                        props: props
+                      };
                     } else if (stackChild.type === 'INSTANCE') {
                       if (stackChild.name.includes('Input')) {
                         const inputProps = extractInputProps(stackChild);
@@ -111,15 +126,15 @@ export function extractModalProps(node: FrameNode): ModalProps {
 
   // Header가 있으면 추가
   if (headerContent.children.length > 0) {
-    props.children.push({ type: 'Header', children: headerContent.children });
+    props.children.push({ type: 'Modal.Header', children: headerContent.children });
   }
 
   // Body 추가
-  props.children.push({ type: 'Body', children: bodyContent.children });
+  props.children.push({ type: 'Modal.Body', children: bodyContent.children });
 
   // Footer가 있으면 추가
   if (footerContent.children.length > 0) {
-    props.children.push({ type: 'Footer', children: footerContent.children });
+    props.children.push({ type: 'Modal.Footer', children: footerContent.children });
   }
 
   return props;
