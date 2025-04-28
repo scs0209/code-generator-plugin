@@ -4,6 +4,9 @@ export function matchComponent(node: SceneNode): string {
   if (node.name === 'input') {
     return 'Input';
   }
+  if (node.name.includes('Button')) {
+    return 'Button';
+  }
   if (node.name === 'Text Area') {
     return 'TextArea';
   }

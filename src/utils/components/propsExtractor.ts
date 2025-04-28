@@ -4,6 +4,7 @@ import { extractTextAreaProps } from './props/textAreaProps';
 import { extractTextProps } from './props/textProps';
 import { extractStackContainerProps } from './props/stackContainerProps';
 import { extractModalProps } from './props/modalProps';
+import { extractButtonProps } from './props/buttonProps';
 
 interface FunctionProp {
   __type: 'function';
@@ -24,6 +25,8 @@ export function extractProps(
   switch (componentName) {
     case 'Input':
       return extractInputProps(node);
+    case 'Button':  
+      return extractButtonProps(node);
     case 'TextArea':
       return extractTextAreaProps(node);
     case 'Text':

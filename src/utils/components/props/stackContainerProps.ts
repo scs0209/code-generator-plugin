@@ -1,94 +1,103 @@
 import { findColorToken } from '../../tokens/colorUtils';
 import { findRadiusToken } from '../../tokens/radiusUtils';
-import tokens from '../../tokens.json';
 
-interface TokenData {
-  type: string;
-  value: string;
+interface StackContainerProps {
+  direction?: 'horizontal' | 'vertical';
+  spacing?: number;
+  justify?: 'start' | 'end' | 'center' | 'space-between';
+  align?: 'start' | 'end' | 'center' | 'baseline';
+  wrap?: boolean;
+  width?: string;
+  height?: string;
+  padding?: string;
+  backgroundColor?: string;
+  borderRadius?: string;
 }
 
-export function extractStackContainerProps(node: FrameNode): Record<string, any> {
-  const props: Record<string, any> = {};
+export function extractStackContainerProps(node: FrameNode): StackContainerProps {
+  const props: StackContainerProps = {};
 
-  if ('layoutMode' in node) {
-    props.direction = node.layoutMode === 'HORIZONTAL' ? 'row' : 'column';
-
-    switch (node.primaryAxisAlignItems) {
-      case 'MIN':
-        props.justify = 'flex-start';
-        break;
-      case 'CENTER':
-        props.justify = 'center';
-        break;
-      case 'MAX':
-        props.justify = 'flex-end';
-        break;
-      case 'SPACE_BETWEEN':
-        props.justify = 'space-between';
-        break;
-    }
-
-    switch (node.counterAxisAlignItems) {
-      case 'MIN':
-        props.align = 'flex-start';
-        break;
-      case 'CENTER':
-        props.align = 'center';
-        break;
-      case 'MAX':
-        props.align = 'flex-end';
-        break;
-    }
-
-    if (node.layoutSizingHorizontal === 'FIXED') {
-      props.width = `${Math.round(node.width)}px`;
-    } else if (node.layoutSizingHorizontal === 'FILL') {
-      props.width = '100%';
-    }
-
-    if (node.layoutSizingVertical === 'FIXED') {
-      props.height = `${Math.round(node.height)}px`;
-    } else if (node.layoutSizingVertical === 'FILL') {
-      props.height = '100%';
-    }
+  // Direction
+  if (node.layoutMode === 'HORIZONTAL') {
+    props.direction = 'horizontal';
+  } else if (node.layoutMode === 'VERTICAL') {
+    props.direction = 'vertical';
   }
 
-  if ('itemSpacing' in node && node.itemSpacing > 0) {
-    const spacingValue = node.itemSpacing;
-    const spacingTokens = (tokens as any).shoplflow;
+  // Spacing
+  if (typeof node.itemSpacing === 'number') {
+    props.spacing = node.itemSpacing;
+  }
 
-    for (const [tokenName, tokenData] of Object.entries(spacingTokens)) {
-      const token = tokenData as TokenData;
-      if (token.type === 'spacing') {
-        const tokenSpacingValue = Number(token.value);
+  // Justify
+  if (node.primaryAxisAlignItems === 'MIN') {
+    props.justify = 'start';
+  } else if (node.primaryAxisAlignItems === 'MAX') {
+    props.justify = 'end';
+  } else if (node.primaryAxisAlignItems === 'CENTER') {
+    props.justify = 'center';
+  } else if (node.primaryAxisAlignItems === 'SPACE_BETWEEN') {
+    props.justify = 'space-between';
+  }
 
-        if (tokenSpacingValue === spacingValue) {
-          props.spacing = tokenName;
-          break;
-        }
+  // Align
+  if (node.counterAxisAlignItems === 'MIN') {
+    props.align = 'start';
+  } else if (node.counterAxisAlignItems === 'MAX') {
+    props.align = 'end';
+  } else if (node.counterAxisAlignItems === 'CENTER') {
+    props.align = 'center';
+  } else if (node.counterAxisAlignItems === 'BASELINE') {
+    props.align = 'baseline';
+  }
+
+  // Wrap
+  if (node.layoutWrap === 'WRAP') {
+    props.wrap = true;
+  }
+
+  // Size
+  if (typeof node.width === 'number') {
+    props.width = `${node.width}px`;
+  }
+  if (typeof node.height === 'number') {
+    props.height = `${node.height}px`;
+  }
+
+  // Padding
+  const padding = [
+    node.paddingTop,
+    node.paddingRight,
+    node.paddingBottom,
+    node.paddingLeft,
+  ].filter((p): p is number => typeof p === 'number');
+
+  if (padding.length > 0) {
+    props.padding = padding.map(p => `${p}px`).join(' ');
+  }
+
+  // Background Color
+  const fills = node.fills as Paint[];
+  if (fills && fills.length > 0) {
+    const fill = fills[0];
+    if (fill.type === 'SOLID' && fill.visible !== false) {
+      const colorToken = findColorToken({
+        r: fill.color.r,
+        g: fill.color.g,
+        b: fill.color.b,
+      });
+      if (colorToken) {
+        props.backgroundColor = colorToken;
       }
     }
   }
 
-  if ('paddingTop' in node || 'paddingBottom' in node || 'paddingLeft' in node || 'paddingRight' in node) {
-    const top = node.paddingTop || 0;
-    const right = node.paddingRight || 0;
-    const bottom = node.paddingBottom || 0;
-    const left = node.paddingLeft || 0;
-    props.padding = `${top}px ${right}px ${bottom}px ${left}px`;
-  }
-
-  if ('fills' in node && Array.isArray(node.fills) && node.fills.length > 0) {
-    const fill = node.fills[0];
-    if (fill.type === 'SOLID' && 'color' in fill) {
-      const colorToken = findColorToken(fill.color);
-      if (colorToken) props.background = colorToken;
-    }
-  }
-
-  if ('cornerRadius' in node && typeof node.cornerRadius === 'number' && node.cornerRadius > 0) {
+  // Border Radius
+  if (typeof node.cornerRadius === 'number') {
     const radiusToken = findRadiusToken(node.cornerRadius);
-    if (radiusToken) props.radius = radiusToken;
+    if (radiusToken) {
+      props.borderRadius = radiusToken;
+    }
   }
 
   return props;

@@ -1,51 +1,52 @@
-import { extractProps } from './propsExtractor';
 import { matchComponent } from '../figma/componentMatcher';
+import { extractProps } from './propsExtractor';
 
-function indent(text: string, space: number = 2): string {
-  return text
-    .split('\n')
-    .map((line) => ' '.repeat(space) + line)
-    .join('\n');
+function formatProps(props: Record<string, any>, excludeKeys: string[] = []): string {
+  return Object.entries(props)
+    .filter(([key]) => !excludeKeys.includes(key))
+    .map(([key, value]) => {
+      if (typeof value === 'string') {
+        return `${key}="${value}"`;
+      } else if (typeof value === 'object' && value.__type === 'function') {
+        return `${key}={${value.value}}`;
+      }
+      return `${key}={${value}}`;
+    })
+    .join(' ');
 }
 
-export function buildComponentRecursive(node: SceneNode): string {
+export function buildComponentRecursive(node: SceneNode, depth: number = 0): string {
   const componentName = matchComponent(node);
-  if (!componentName) return '';
-
   const props = extractProps(node, componentName);
-  const innerText = 'characters' in node ? node.characters : undefined;
+  const indent = '  '.repeat(depth);
 
-  let childrenCode = '';
-
-  if ('children' in node && node.children.length > 0 && componentName !== 'Input') {
-    childrenCode = node.children.map(buildComponentRecursive).join('\n');
+  // 버튼 컴포넌트의 경우 Text 컴포넌트를 생성하지 않음
+  if (componentName === 'Button') {
+    const propsString = formatProps(props, ['children']);
+    const children = props.children || '';
+    return `${indent}<${componentName} ${propsString}>${children}</${componentName}>`;
   }
 
-  let propsString = '';
-  for (const key in props) {
-    const value = props[key];
-    
-    if (value && typeof value === 'object' && '__type' in value && value.__type === 'function') {
-      propsString += ` ${key}={${value.value}}`;
-    } else if (typeof value === 'string') {
-      propsString += ` ${key}="${value}"`;
-    } else {
-      propsString += ` ${key}={${value}}`;
+  // 일반적인 컴포넌트 처리
+  if ('children' in node) {
+    const children = (node.children || [])
+      .map(child => buildComponentRecursive(child, depth + 1))
+      .filter(Boolean)
+      .join('\n');
+
+    if (children) {
+      const propsString = formatProps(props);
+      return `${indent}<${componentName} ${propsString}>\n${children}\n${indent}</${componentName}>`;
     }
   }
 
-  if (componentName === 'Input' || componentName === 'TextArea') {
-    return `<${componentName}${propsString} />`;
+  // Text 컴포넌트 처리
+  if (componentName === 'Text' && node.type === 'TEXT') {
+    const propsString = formatProps(props);
+    return `${indent}<${componentName} ${propsString}>${node.characters}</${componentName}>`;
   }
 
-  const openingTag = `<${componentName}${propsString}>`;
-  const closingTag = `</${componentName}>`;
-
-  const content = componentName === 'Text' && innerText
-    ? innerText
-    : childrenCode;
-
-  return `${openingTag}
-${indent(content)}
-${closingTag}`;
+  // 자식이 없는 컴포넌트 처리
+  const propsString = formatProps(props);
+  return `${indent}<${componentName} ${propsString} />`;
 } 
