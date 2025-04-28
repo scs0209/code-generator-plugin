@@ -1,7 +1,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import DefaultView from './components/DefaultView';
-import './styles/base.scss';
+import './index.css';
 
 const container = document.getElementById('root') as HTMLElement;
 if (container) {

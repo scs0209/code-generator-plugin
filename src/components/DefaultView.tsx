@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import tokens from '../utils/tokens.json';
 import componentLibrary from '../utils/component-library.json';
-import { CodeBlock, dracula } from 'react-code-blocks';
+import { CopyBlock, dracula } from 'react-code-blocks';
+import '../index.css';
 
 interface ColorTokenMap {
   [key: string]: string;
@@ -62,7 +63,6 @@ const DefaultView = () => {
     const componentLib = componentLibrary as unknown as ComponentLibrary;
 
     for (const category in tokensData.shoplflow) {
-      console.log(category);
       const group = tokensData.shoplflow[category];
       if (typeof group === 'object') {
         for (const tokenName in group) {
@@ -98,92 +98,53 @@ const DefaultView = () => {
     );
   };
 
-  console.log(output);
-
   return (
-    <div
-      style={{
-        padding: '24px',
-        backgroundColor: '#f8f9fa',
-        minHeight: '100vh',
-      }}
-    >
-      <div
-        style={{
-          maxWidth: '800px',
-          margin: '0 auto',
-          backgroundColor: 'white',
-          borderRadius: '12px',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
-          padding: '24px',
-        }}
-      >
-        <h1
-          style={{
-            fontSize: '24px',
-            fontWeight: '600',
-            color: '#1a1a1a',
-            marginBottom: '16px',
-          }}
-        >
+    <div className="p-6 bg-gray-50 min-h-screen">
+      <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-sm p-6">
+        <h1 className="text-2xl font-semibold text-gray-900 mb-4">
           Figma to Code
         </h1>
-        <p
-          style={{
-            color: '#666',
-            marginBottom: '24px',
-            fontSize: '14px',
-          }}
-        >
+        <p className="text-gray-600 mb-6 text-sm">
           선택한 Figma 컴포넌트를 코드로 변환합니다.
         </p>
         <button
           onClick={handleGenerate}
-          style={{
-            backgroundColor: '#3b82f6',
-            color: 'white',
-            padding: '12px 24px',
-            borderRadius: '8px',
-            border: 'none',
-            fontSize: '14px',
-            fontWeight: '500',
-            cursor: 'pointer',
-            transition: 'background-color 0.2s',
-            marginBottom: '24px',
-            width: '100%',
-            maxWidth: '200px',
-          }}
-          onMouseOver={(e) =>
-            (e.currentTarget.style.backgroundColor = '#2563eb')
-          }
-          onMouseOut={(e) =>
-            (e.currentTarget.style.backgroundColor = '#3b82f6')
-          }
+          className="w-full max-w-[200px] mb-6 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-lg transition-colors"
         >
           코드 생성
         </button>
-        <div
-          style={{
-            width: '100%',
-            height: '400px',
-            borderRadius: '8px',
-            border: '1px solid #e5e7eb',
-            overflow: 'auto',
-          }}
-        >
-          <CodeBlock
-            text={output}
-            language="tsx"
-            theme={dracula}
-            showLineNumbers={true}
-            customStyle={{
-              width: '100%',
-              height: '400px',
-              borderRadius: '8px',
-              border: '1px solid #e5e7eb',
-              overflow: 'auto',
-            }}
-          />
+        <div className="relative max-w-2xl mx-auto mt-24">
+          <div className="bg-gray-900 text-white p-4 rounded-md">
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-gray-400 flex gap-2">
+                <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                <div className="w-3 h-3 rounded-full bg-green-500"></div>
+              </span>
+              <button
+                className="bg-gray-800 code hover:bg-gray-700 text-gray-300 px-3 py-1 rounded-md"
+                data-clipboard-target="#code">
+                Copy
+              </button>
+              </div>
+            <div className="overflow-x-auto">
+                <CopyBlock
+                text={output}
+                language="tsx"
+                theme={dracula}
+                showLineNumbers={true}
+                codeBlock
+                customStyle={{
+                  padding: '1.25rem',
+                  fontSize: '0.875rem',
+                  fontFamily: 'JetBrains Mono, Monaco, Menlo, Consolas, monospace',
+                  lineHeight: '1.6',
+                  margin: '0',
+                  background: 'rgb(31 41 55)',
+                }}
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>

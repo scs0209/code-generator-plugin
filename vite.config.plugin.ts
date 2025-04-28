@@ -3,11 +3,12 @@ import path from "node:path";
 import { viteSingleFile } from "vite-plugin-singlefile";
 import react from "@vitejs/plugin-react";
 import replace from "@rollup/plugin-replace";
-import * as sass from "sass-embedded";
+import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig(({ mode }: ConfigEnv): UserConfig => ({
   plugins: [
     react(),
+    tailwindcss(),
     viteSingleFile({
       removeViteModuleLoader: true,
     }),
@@ -42,4 +43,7 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => ({
       "@": path.resolve(__dirname, "src"),
     },
   },
+define: {
+  _global: {},
+},
 }));

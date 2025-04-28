@@ -19,7 +19,8 @@ function matchComponent(node: SceneNode): string {
   }
   if (node.type === 'FRAME') {
     const name = node.name.toLowerCase();
-    if (name.includes('modal')) {
+    // console.log('name', name, node);
+    if (name.includes('modal') || name.includes('confirm')) {
       return 'Modal';
     }
   }
@@ -43,9 +44,6 @@ function rgbToHex(r: number, g: number, b: number): string {
 export function findTypographyToken(node: any): string {
   const typographyTokens = (tokens as any).shopl;
 
-
-  // Comparing with token: title1_700 {tokenSize: 18, tokenWeight: '{fontWeight.bold}', tokenFamily: 'Pretendard', tokenLineHeight: 22}
-  // Node typography: {fontSize: 18, fontWeight: 'Bold', fontFamily: 'Pretendard', lineHeightPx: 22}
   const { fontSize, fontWeight, fontFamily, lineHeightPx } = {
     fontSize: node.fontSize,
     fontWeight: `{fontWeight.${node.fontName.style.toLowerCase()}}`,
@@ -56,8 +54,6 @@ export function findTypographyToken(node: any): string {
   if (!fontSize || !fontWeight || !fontFamily || !lineHeightPx) {
     return 'body1_400'; // fallback
   }
-
-  console.log('Node typography:', { fontSize, fontWeight, fontFamily, lineHeightPx });
 
   for (const [tokenName, token] of Object.entries(typographyTokens)) {
     const typographyToken = token as {
@@ -70,19 +66,11 @@ export function findTypographyToken(node: any): string {
       };
     };
 
-    console.log('typographyToken', typographyToken.type);
     if (typographyToken.type === 'typography') {
       const tokenSize = parseFloat(typographyToken.value.fontSize);
       const tokenWeight = typographyToken.value.fontWeight;
       const tokenFamily = typographyToken.value.fontFamily;
       const tokenLineHeight = parseFloat(typographyToken.value.lineHeight);
-
-      console.log('Comparing with token:', tokenName, {
-        tokenSize,
-        tokenWeight,
-        tokenFamily,
-        tokenLineHeight
-      });
 
       const isFontSizeMatch = tokenSize === fontSize;
       const isFontWeightMatch = tokenWeight === fontWeight;
@@ -95,7 +83,6 @@ export function findTypographyToken(node: any): string {
     }
   }
 
-  console.log('No matching typography token found');
   return 'body1_400'; // fallback
 }
 
@@ -123,6 +110,7 @@ export function findColorToken(color: RGB): string {
 }
 
 export function findRadiusToken(value: number | string): string | null {
+  console.log("value", value)
   for (const [key, token] of Object.entries(tokens.shoplflow)) {
     const radiusToken = token as { value: string };
     if (key.startsWith('borderRadius') && radiusToken.value === String(value)) {
@@ -187,35 +175,87 @@ function extractProps(
   }
 
   if (componentName === 'StackContainer' && node.type === 'FRAME') {
+    // console.log('StackContainer props:', props, componentName, node);
     // 레이아웃 관련 props
     if ('layoutMode' in node) {
-      props.direction = node.layoutMode === 'HORIZONTAL' ? 'row' : 'column';
-      if (node.primaryAxisAlignItems === 'CENTER') props.justify = 'center';
-      else if (node.primaryAxisAlignItems === 'MAX') props.justify = 'flex-end';
-      else if (node.primaryAxisAlignItems === 'SPACE_BETWEEN') props.justify = 'space-between';
-      else props.justify = 'flex-start';
+      // console.log('Layout properties:', {
+      //   layoutMode: node.layoutMode,
+      //   primaryAxisAlignItems: node.primaryAxisAlignItems,
+      //   primaryAxisSizingMode: node.primaryAxisSizingMode,
+      //   counterAxisAlignItems: node.counterAxisAlignItems,
+      //   counterAxisSizingMode: node.counterAxisSizingMode,
+      //   layoutPositioning: node.layoutPositioning,
+      //   layoutSizingHorizontal: node.layoutSizingHorizontal,
+      //   layoutSizingVertical: node.layoutSizingVertical
+      // });
+      // console.log("node.cornerRadius", node.cornerRadius)
 
-      if (node.counterAxisAlignItems === 'CENTER') props.align = 'center';
-      else if (node.counterAxisAlignItems === 'MAX') props.align = 'flex-end';
-      else props.align = 'flex-start';
+      props.direction = node.layoutMode === 'HORIZONTAL' ? 'row' : 'column';
+
+      // primaryAxisAlignItems에 따른 justify 설정
+      switch (node.primaryAxisAlignItems) {
+        case 'MIN':
+          props.justify = 'flex-start';
+          break;
+        case 'CENTER':
+          props.justify = 'center';
+          break;
+        case 'MAX':
+          props.justify = 'flex-end';
+          break;
+        case 'SPACE_BETWEEN':
+          props.justify = 'space-between';
+          break;
+      }
+
+      // counterAxisAlignItems에 따른 align 설정
+      switch (node.counterAxisAlignItems) {
+        case 'MIN':
+          props.align = 'flex-start';
+          break;
+        case 'CENTER':
+          props.align = 'center';
+          break;
+        case 'MAX':
+          props.align = 'flex-end';
+          break;
+      }
+
+      // layoutSizing에 따른 width/height 설정
+      if (node.layoutSizingHorizontal === 'FIXED') {
+        props.width = `${Math.round(node.width)}px`;
+      } else if (node.layoutSizingHorizontal === 'FILL') {
+        props.width = '100%';
+      }
+      // HUG인 경우는 width를 설정하지 않음
+
+      if (node.layoutSizingVertical === 'FIXED') {
+        props.height = `${Math.round(node.height)}px`;
+      } else if (node.layoutSizingVertical === 'FILL') {
+        props.height = '100%';
+      }
+      // HUG인 경우는 height를 설정하지 않음
     }
 
     // 간격 관련 props
     if ('itemSpacing' in node && node.itemSpacing > 0) {
       const spacingValue = node.itemSpacing;
-      const spacingTokens = (tokens as any).shoplflow.spacing;
+      const spacingTokens = (tokens as any).shoplflow;
       
       // 가장 가까운 spacing 토큰 찾기
       let closestToken = '';
       let minDiff = Infinity;
 
       for (const [tokenName, token] of Object.entries(spacingTokens)) {
-        const tokenValue = parseInt((token as { value: string }).value, 10);
-        const diff = Math.abs(spacingValue - tokenValue);
-        
-        if (diff < minDiff) {
-          minDiff = diff;
-          closestToken = tokenName;
+        const spacingToken = token as { type: string; value: string };
+        if (spacingToken.type === 'spacing') {
+          const tokenValue = parseInt(spacingToken.value, 10);
+          const diff = Math.abs(spacingValue - tokenValue);
+          
+          if (diff < minDiff) {
+            minDiff = diff;
+            closestToken = tokenName;
+          }
         }
       }
 
@@ -248,6 +288,7 @@ function extractProps(
 
     // border radius 관련 props
     if ('cornerRadius' in node && typeof node.cornerRadius === 'number' && node.cornerRadius > 0) {
+      console.log("node.cornerRadius", node.cornerRadius)
       const radiusToken = findRadiusToken(node.cornerRadius);
       if (radiusToken) props.radius = radiusToken;
     }
@@ -289,7 +330,6 @@ function buildComponentRecursive(node: SceneNode): string {
   if (!componentName) return '';
 
   const props = extractProps(node, componentName);
-  console.log('props', props);
   const innerText = 'characters' in node ? node.characters : undefined;
 
   let childrenCode = '';
@@ -301,7 +341,7 @@ function buildComponentRecursive(node: SceneNode): string {
   const componentInfo = (componentLibrary as any).components[
     componentName
   ] as ComponentInfo;
-  if (!componentInfo) return '';
+  // if (!componentInfo) return '';
 
   let propsString = '';
   for (const key in props) {

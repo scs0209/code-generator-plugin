@@ -33,9 +33,11 @@
   },
   "homepage": "https://github.com/planetabhi/figma-plugin-react#readme",
   "dependencies": {
+    "@tailwindcss/vite": "^4.1.4",
     "react": "19.1.0",
     "react-code-blocks": "^0.1.6",
     "react-dom": "19.1.0",
+    "tailwindcss": "^4.1.4",
     "vite": "6.2.4"
   },
   "devDependencies": {
