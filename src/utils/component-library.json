@@ -2,178 +2,207 @@
   "style": "default",
   "components": {
     "Modal": {
-      "name": "Modal",
-      "type": "ui",
-      "props": {
-        "height": {
-          "type": "number",
-          "required": false,
-          "description": "모달의 높이를 설정합니다. (최대 1200px)"
-        },
-        "outsideClick": {
-          "type": "(args?: any) => void",
-          "required": false,
-          "description": "모달의 외부를 클릭했을 때 실행되는 함수입니다."
-        },
-        "sizeVar": {
-          "type": "\"XXS\" | \"XS\" | \"S\" | \"M\" | \"L\" | \"XL\" | \"XXL\" | \"XXXL\" | \"FULL\"",
-          "required": false,
-          "description": "모달의 크기를 설정합니다.",
-          "default": "M"
-        },
-        "children": {
-          "type": "React.ReactNode | React.ReactNode[]",
-          "required": true,
-          "description": "Modal.Header, Modal.Body, Modal.Footer 컴포넌트들을 포함합니다."
-        }
-      },
-      "styles": {
-        "layout": {
-          "display": {
-            "type": "string",
-            "required": true,
-            "values": "flex"
-          },
-          "flexDirection": {
-            "type": "string",
-            "required": true,
-            "values": "column"
-          },
-          "overflow": {
-            "type": "string",
-            "required": true,
-            "values": "hidden"
-          }
-        },
-        "sizing": {
-          "width": {
-            "type": "function",
-            "required": true,
-            "values": {
-              "XXS": "400px",
-              "XS": "500px",
-              "S": "560px",
-              "M": "640px",
-              "L": "768px",
-              "XL": "1040px",
-              "XXL": "1280px",
-              "XXXL": "1600px",
-              "FULL": "100vw"
-            }
+    "name": "Modal",
+    "type": "overlay",
+    "components": {
+      "ModalContainer": {
+        "name": "ModalContainer",
+        "props": {
+          "sizeVar": {
+            "type": "ModalSizeType",
+            "required": false,
+            "description": "모달의 크기를 설정합니다.",
+            "default": "M",
+            "options": ["XXS", "XS", "S", "M", "L", "XL", "XXL", "XXXL", "FULL"]
           },
           "height": {
             "type": "number",
             "required": false,
-            "values": {
-              "min": "180px",
-              "max": "1200px"
-            }
-          }
-        },
-        "visual": {
-          "background": {
-            "type": "string",
-            "required": true,
-            "values": "neutral0"
+            "description": "모달의 높이를 설정합니다."
           },
-          "borderRadius": {
-            "type": "string",
-            "required": true,
-            "values": "borderRadius08"
+          "outsideClick": {
+            "type": "function",
+            "required": false,
+            "description": "모달의 외부를 클릭했을 때 실행되는 함수입니다."
           },
-          "boxShadow": {
-            "type": "string",
-            "required": true,
-            "values": "dropShadow"
+          "children": {
+            "type": "React.ReactNode | React.ReactNode[]",
+            "required": false,
+            "description": "모달 내부에 표시될 내용입니다."
           }
         }
       },
-      "contents": {
-        "title": "Modal",
-        "description": "컨텐츠를 모달 형태로 표시하는 컴포넌트입니다.",
-        "note": "Header, Body, Footer 구조를 제공하며, 각 부분을 선택적으로 사용할 수 있습니다.",
+      "ModalHeader": {
+        "name": "ModalHeader",
+        "props": {
+          "children": {
+            "type": "React.ReactNode",
+            "required": true,
+            "description": "헤더에 표시될 내용입니다."
+          }
+        }
+      },
+      "ModalBody": {
+        "name": "ModalBody",
+        "props": {
+          "children": {
+            "type": "React.ReactNode",
+            "required": true,
+            "description": "본문에 표시될 내용입니다."
+          },
+          "isIncludeHeader": {
+            "type": "boolean",
+            "required": false,
+            "description": "헤더가 포함되어 있는지 여부를 설정합니다.",
+            "default": false
+          },
+          "isIncludeFooter": {
+            "type": "boolean",
+            "required": false,
+            "description": "푸터가 포함되어 있는지 여부를 설정합니다.",
+            "default": false
+          },
+          "height": {
+            "type": "number",
+            "required": false,
+            "description": "본문의 높이를 설정합니다."
+          },
+          "sizeVar": {
+            "type": "ModalSizeType",
+            "required": false,
+            "description": "본문의 크기를 설정합니다."
+          }
+        },
         "features": [
-          "다양한 크기 옵션 (XXS부터 XXXL까지)",
-          "스크롤 영역 자동 조절",
-          "헤더/푸터 선택적 사용",
-          "외부 클릭 처리",
-          "반응형 크기 조절 (viewport에 따른 자동 조절)",
-          "최대/최소 높이 자동 제어"
+          "자동 높이 조정",
+          "스크롤 영역",
+          "헤더/푸터 높이 고려",
+          "반응형 높이 계산"
         ]
       },
-      "template": "<Modal\n  sizeVar=\"M\"\n  height={400}\n  outsideClick={() => {}}\n>\n  <Modal.Header>제목</Modal.Header>\n  <Modal.Body\n    isIncludeHeader={true}\n    isIncludeFooter={true}\n  >\n    컨텐츠 내용\n  </Modal.Body>\n  <Modal.Footer>\n    <Button>확인</Button>\n  </Modal.Footer>\n</Modal>",
-      "variants": {
-        "size": {
-          "type": "string",
-          "default": "M",
-          "values": ["XXS", "XS", "S", "M", "L", "XL", "XXL", "XXXL", "FULL"]
-        },
-        "layout": {
-          "type": "object",
-          "values": {
-            "withHeader": {
-              "bodyPadding": "16px 0 24px"
-            },
-            "withoutHeader": {
-              "bodyPadding": "24px 0"
-            },
-            "fullScreen": {
-              "bodyPadding": "0"
-            }
+      "ModalFooter": {
+        "name": "ModalFooter",
+        "props": {
+          "children": {
+            "type": "React.ReactNode",
+            "required": true,
+            "description": "푸터에 표시될 내용입니다."
           }
         }
       },
-      "children": {
-        "Header": {
-          "props": {
-            "children": {
-              "type": "React.ReactNode",
-              "required": true,
-              "description": "헤더에 표시할 내용"
-            }
-          },
-          "styles": {
-            "minHeight": "64px",
-            "padding": "12px 16px 12px 24px"
+      "ModalTop": {
+        "name": "ModalTop",
+        "props": {
+          "children": {
+            "type": "React.ReactNode",
+            "required": true,
+            "description": "상단에 표시될 내용입니다."
           }
         },
-        "Body": {
-          "props": {
-            "children": {
-              "type": "React.ReactNode",
-              "required": true,
-              "description": "본문에 표시할 내용"
-            },
-            "isIncludeHeader": {
-              "type": "boolean",
-              "required": false,
-              "description": "헤더 포함 여부"
-            },
-            "isIncludeFooter": {
-              "type": "boolean",
-              "required": false,
-              "description": "푸터 포함 여부"
-            }
-          },
-          "styles": {
-            "padding": "0 24px"
+        "features": [
+          "자동 높이 계산",
+          "모달 컨테이너 높이 조정"
+        ]
+      },
+      "ModalBottom": {
+        "name": "ModalBottom",
+        "props": {
+          "children": {
+            "type": "React.ReactNode",
+            "required": true,
+            "description": "하단에 표시될 내용입니다."
           }
         },
-        "Footer": {
-          "props": {
-            "children": {
-              "type": "React.ReactNode",
-              "required": true,
-              "description": "푸터에 표시할 내용"
-            }
-          },
-          "styles": {
-            "padding": "16px 24px",
-            "borderTop": "1px solid neutral300"
-          }
-        }
+        "features": [
+          "자동 높이 계산",
+          "모달 컨테이너 높이 조정"
+        ]
       }
     },
+    "styles": {
+      "container": {
+        "base": {
+          "display": "flex",
+          "flexDirection": "column",
+          "borderRadius": "borderRadius08",
+          "background": "neutral0",
+          "boxShadow": "dropShadow",
+          "overflow": "hidden",
+          "flexGrow": 1,
+          "minHeight": "180px",
+          "maxHeight": "1200px"
+        },
+        "size": {
+          "XXS": { "width": "400px" },
+          "XS": { "width": "500px" },
+          "S": { "width": "560px" },
+          "M": { "width": "640px" },
+          "L": { "width": "768px" },
+          "XL": { "width": "1040px" },
+          "XXL": { "width": "1280px" },
+          "XXXL": { "width": "1600px" },
+          "FULL": {
+            "minHeight": "100vh",
+            "maxHeight": "100vh",
+            "width": "100vw",
+            "maxWidth": "100vw",
+            "borderRadius": "0",
+            "boxShadow": "none"
+          }
+        }
+      },
+      "header": {
+        "display": "flex",
+        "width": "100%",
+        "minHeight": "64px",
+        "justifyContent": "space-between",
+        "alignItems": "center",
+        "padding": "12px 16px 12px 24px",
+        "gap": "10px"
+      },
+      "body": {
+        "display": "flex",
+        "width": "100%",
+        "height": "100%",
+        "overflow": "hidden",
+        "flexDirection": "column",
+        "background": "neutral0",
+        "boxSizing": "border-box",
+        "flex": 1,
+        "padding": "0 24px",
+        "minHeight": "auto",
+        "maxHeight": "auto"
+      },
+      "footer": {
+        "display": "flex",
+        "width": "100%",
+        "flexDirection": "row",
+        "alignItems": "center",
+        "justifyContent": "flex-end",
+        "padding": "16px 24px",
+        "gap": "12px",
+        "borderTop": "1px solid neutral300",
+        "background": "neutral0"
+      },
+      "bottom": {
+        "width": "100%"
+      }
+    },
+    "contents": {
+      "title": "Modal",
+      "description": "사용자의 주의를 끌어야 하는 중요한 정보나 작업을 표시할 때 사용하는 오버레이 컴포넌트입니다.",
+      "features": [
+        "다양한 크기 옵션 (XXS ~ XXXL, FULL)",
+        "커스텀 높이 설정",
+        "반응형 디자인",
+        "헤더/푸터 포함 여부 설정",
+        "풀스크린 모드",
+        "자동 높이 계산",
+        "스크롤 영역"
+      ]
+    },
+    "template": "<Modal.Container sizeVar=\"M\" height={900}>\n  <Modal.Header>\n    <Text typography=\"title1_700\">모달 헤더 영역</Text>\n  </Modal.Header>\n  <Modal.Top>\n    <div style={{ height: '100px', width: '100%', backgroundColor: 'yellow' }}>상단</div>\n  </Modal.Top>\n  <Modal.Body>\n    <Stack.Vertical>\n      {Array(20).fill(0).map((_, index) => (\n        <Box key={index} width=\"100%\" height=\"100px\" background=\"primary300\" />\n      ))}\n    </Stack.Vertical>\n  </Modal.Body>\n  <Modal.Bottom>\n    <div style={{ height: '100px', width: '100%', backgroundColor: 'green' }}>하단</div>\n  </Modal.Bottom>\n  <Modal.Footer>\n    <Text typography=\"body1_400\">버튼이 들어가는 자리에요</Text>\n    <Button styleVar=\"SECONDARY\">버튼</Button>\n    <Button>버튼</Button>\n  </Modal.Footer>\n</Modal.Container>"
+  },
     "StackContainer": {
     "name": "StackContainer",
     "type": "layout",

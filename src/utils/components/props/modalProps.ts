@@ -4,17 +4,17 @@ import { extractTextProps } from './textProps';
 import { extractInputProps } from './inputProps';
 import { extractButtonProps } from './buttonProps';
 
-interface ModalContent {
-  children: any[];
-}
+type ModalSizeType = 'XXS' | 'XS' | 'S' | 'M' | 'L' | 'XL' | 'XXL' | 'XXXL' | 'FULL';
 
 interface ModalChild {
-  type: 'Modal.Header' | 'Modal.Body' | 'Modal.Footer';
+  type: 'Modal.Header' | 'Modal.Top' | 'Modal.Body' | 'Modal.Bottom' | 'Modal.Footer';
+  props?: any;
   children: any[];
 }
 
 interface ModalProps {
-  sizeVar?: string;
+  sizeVar?: ModalSizeType;
+  height?: number;
   children: ModalChild[];
 }
 
@@ -23,187 +23,145 @@ export function extractModalProps(node: FrameNode): ModalProps {
     children: [],
   };
 
+  // 모달 크기 설정
   if (node.width) {
-    props.sizeVar = getModalSizeVar(node.width);
+    const modalSize = getModalSizeVar(node.width) as ModalSizeType;
+    props.sizeVar = modalSize;
+  }
+
+  // 모달 높이 설정
+  if (node.height && node.height !== Infinity) {
+    props.height = node.height;
   }
 
   // 자식 노드들을 순회하며 Modal 구조 파악
-  const children = (node as any).children || [];
-  const headerContent: ModalContent = { children: [] };
-  const bodyContent: ModalContent = { children: [] };
-  const footerContent: ModalContent = { children: [] };
+  const children = node.children || [];
+  const headerContent: any[] = [];
+  const topContent: any[] = [];
+  const bodyContent: any[] = [];
+  const bottomContent: any[] = [];
+  const footerContent: any[] = [];
 
-  // Header, Body, Footer를 이름으로 구분
   children.forEach((child: any) => {
-    if (child.name.includes('Modal Header')) {
-      if (child.children) {
-        headerContent.children = child.children
-          .map((grandChild: any) => {
-            if (grandChild.type === 'TEXT') {
-              const textProps = extractTextProps(grandChild);
-              const props = Object.assign({}, textProps);
-              props.children = grandChild.characters;
-              return { 
-                type: 'Text', 
-                props: props
-              };
-            }
-            return null;
-          })
-          .filter(Boolean);
+    if (child.name.toLowerCase().includes('header')) {
+      const childContentArray = extractChildContent(child);
+      for (let i = 0; i < childContentArray.length; i++) {
+        headerContent.push(childContentArray[i]);
       }
-    } else if (child.name.includes('body')) {
-      if (child.children) {
-        const bodyChildren = child.children
-          .map((grandChild: any) => {
-            if (grandChild.type === 'TEXT') {
-              const textProps = extractTextProps(grandChild);
-              const props = Object.assign({}, textProps);
-              props.children = grandChild.characters;
-              return { 
-                type: 'Text', 
-                props: props
-              };
-            } else if (grandChild.type === 'FRAME') {
-              const stackProps = extractStackContainerProps(grandChild);
-              const stackChildren = grandChild.children
-                ? grandChild.children.map((stackChild: any) => {
-                    if (stackChild.type === 'TEXT') {
-                      const textProps = extractTextProps(stackChild);
-                      const props = Object.assign({}, textProps);
-                      props.children = stackChild.characters;
-                      return { 
-                        type: 'Text', 
-                        props: props
-                      };
-                    } else if (stackChild.type === 'INSTANCE') {
-                      if (stackChild.name.includes('Input')) {
-                        const inputProps = extractInputProps(stackChild);
-                        return { type: 'Input', props: inputProps };
-                      } else if (stackChild.name.includes('Button')) {
-                        const buttonProps = extractButtonProps(stackChild);
-                        const props = Object.assign({}, buttonProps);
-                        let buttonText = '';
-                        if (stackChild.children && stackChild.children.length > 0 && stackChild.children[0]) {
-                          buttonText = stackChild.children[0].characters || '';
-                        }
-                        props.children = buttonText;
-                        return { type: 'Button', props: props };
-                      }
-                    } else if (stackChild.type === 'FRAME') {
-                      const nestedStackProps = extractStackContainerProps(stackChild);
-                      const nestedChildren = extractChildrenRecursively(stackChild);
-                      return {
-                        type: 'StackContainer',
-                        props: nestedStackProps,
-                        children: nestedChildren,
-                      };
-                    }
-                    return null;
-                  })
-                : [];
-              return {
-                type: 'StackContainer',
-                props: stackProps,
-                children: stackChildren.filter(Boolean),
-              };
-            } else if (grandChild.type === 'INSTANCE') {
-              if (grandChild.name.includes('Input')) {
-                const inputProps = extractInputProps(grandChild);
-                return { type: 'Input', props: inputProps };
-              } else if (grandChild.name.includes('Button')) {
-                const buttonProps = extractButtonProps(grandChild);
-                const props = Object.assign({}, buttonProps);
-                let buttonText = '';
-                if (grandChild.children && grandChild.children.length > 0 && grandChild.children[0]) {
-                  buttonText = grandChild.children[0].characters || '';
-                }
-                props.children = buttonText;
-                return { type: 'Button', props: props };
-              }
-            }
-            return null;
-          })
-          .filter(Boolean);
-        bodyContent.children.push(...bodyChildren);
+    } else if (child.name.toLowerCase().includes('top')) {
+      const childContentArray = extractChildContent(child);
+      for (let i = 0; i < childContentArray.length; i++) {
+        topContent.push(childContentArray[i]);
       }
-    } else if (child.name.includes('Modal footer')) {
-      if (child.children) {
-        footerContent.children = child.children
-          .map((grandChild: any) => {
-            if (
-              grandChild.type === 'INSTANCE' &&
-              grandChild.name.includes('Button')
-            ) {
-              const buttonProps = extractButtonProps(grandChild);
-              const props = Object.assign({}, buttonProps);
-              let buttonText = '';
-              if (grandChild.children && grandChild.children.length > 0 && grandChild.children[0]) {
-                buttonText = grandChild.children[0].characters || '';
-              }
-              props.children = buttonText;
-              return { type: 'Button', props: props };
-            }
-            return null;
-          })
-          .filter(Boolean);
+    } else if (child.name.toLowerCase().includes('body')) {
+      const childContentArray = extractChildContent(child);
+      for (let i = 0; i < childContentArray.length; i++) {
+        bodyContent.push(childContentArray[i]);
+      }
+    } else if (child.name.toLowerCase().includes('bottom')) {
+      const childContentArray = extractChildContent(child);
+      for (let i = 0; i < childContentArray.length; i++) {
+        bottomContent.push(childContentArray[i]);
+      }
+    } else if (child.name.toLowerCase().includes('footer')) {
+      const childContentArray = extractChildContent(child);
+      for (let i = 0; i < childContentArray.length; i++) {
+        footerContent.push(childContentArray[i]);
       }
     }
   });
 
-  // Body는 필수, Header와 Footer는 선택적
-  if (bodyContent.children.length === 0) {
-    throw new Error('Modal must have Body component');
+  // Header 추가
+  if (headerContent.length > 0) {
+    props.children.push({ 
+      type: 'Modal.Header',
+      children: headerContent 
+    });
   }
 
-  // Header가 있으면 추가
-  if (headerContent.children.length > 0) {
-    props.children.push({ type: 'Modal.Header', children: headerContent.children });
+  // Top 추가
+  if (topContent.length > 0) {
+    props.children.push({ 
+      type: 'Modal.Top',
+      children: topContent 
+    });
   }
 
-  // Body 추가
-  props.children.push({ type: 'Modal.Body', children: bodyContent.children });
+  // Body 추가 (필수)
+  props.children.push({ 
+    type: 'Modal.Body',
+    children: bodyContent 
+  });
 
-  // Footer가 있으면 추가
-  if (footerContent.children.length > 0) {
-    props.children.push({ type: 'Modal.Footer', children: footerContent.children });
+  // Bottom 추가
+  if (bottomContent.length > 0) {
+    props.children.push({ 
+      type: 'Modal.Bottom',
+      children: bottomContent 
+    });
+  }
+
+  // Footer 추가
+  if (footerContent.length > 0) {
+    props.children.push({ 
+      type: 'Modal.Footer',
+      children: footerContent 
+    });
   }
 
   return props;
 }
 
-function extractChildrenRecursively(node: any): any[] {
+function extractChildContent(node: any): any[] {
   if (!node.children) return [];
 
   return node.children.map((child: any) => {
     if (child.type === 'TEXT') {
       const textProps = extractTextProps(child);
-      const props = Object.assign({}, textProps);
-      props.children = child.characters;
-      return { type: 'Text', props: props };
-    } else if (child.type === 'INSTANCE') {
+      return { 
+        type: 'Text', 
+        props: Object.assign({}, textProps, {
+          children: child.characters
+        })
+      };
+    } 
+    
+    if (child.type === 'INSTANCE') {
+      if (child.name.includes('Button')) {
+        const buttonProps = extractButtonProps(child);
+        let buttonText = '';
+        if (child.children && child.children.length > 0) {
+          if (child.children[0] && child.children[0].characters) {
+            buttonText = child.children[0].characters;
+          }
+        }
+        return { 
+          type: 'Button', 
+          props: Object.assign({}, buttonProps, {
+            children: buttonText
+          })
+        };
+      }
+      
       if (child.name.includes('Input')) {
         const inputProps = extractInputProps(child);
-        return { type: 'Input', props: inputProps };
-      } else if (child.name.includes('Button')) {
-        const buttonProps = extractButtonProps(child);
-        const props = Object.assign({}, buttonProps);
-        let buttonText = '';
-        if (child.children && child.children.length > 0 && child.children[0]) {
-          buttonText = child.children[0].characters || '';
-        }
-        props.children = buttonText;
-        return { type: 'Button', props: props };
+        return { 
+          type: 'Input', 
+          props: Object.assign({}, inputProps)
+        };
       }
-    } else if (child.type === 'FRAME') {
+    }
+    
+    if (child.type === 'FRAME') {
       const stackProps = extractStackContainerProps(child);
-      const children = extractChildrenRecursively(child);
+      const stackChildren = extractChildContent(child);
       return {
-        type: 'StackContainer',
-        props: stackProps,
-        children: children,
+        type: 'Stack.Vertical',
+        props: Object.assign({}, stackProps),
+        children: stackChildren
       };
     }
+
     return null;
   }).filter(Boolean);
 }
