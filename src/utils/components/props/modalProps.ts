@@ -3,6 +3,7 @@ import { extractStackContainerProps } from './stackContainerProps';
 import { extractTextProps } from './textProps';
 import { extractInputProps } from './inputProps';
 import { extractButtonProps } from './buttonProps';
+import { extractIconButtonProps } from './iconButtonProps';
 
 type ModalSizeType = 'XXS' | 'XS' | 'S' | 'M' | 'L' | 'XL' | 'XXL' | 'XXXL' | 'FULL';
 
@@ -109,6 +110,8 @@ export function extractModalProps(node: any): ModalProps {
     });
   }
 
+  console.log("props", props);
+
   return props;
 }
 
@@ -127,6 +130,14 @@ function extractChildContent(node: any): any[] {
     } 
     
     if (child.type === 'INSTANCE') {
+      if (child.name.includes('Icon Button')) {
+        const iconButtonProps = extractIconButtonProps(child);
+        return { 
+          type: 'IconButton', 
+          props: Object.assign({}, iconButtonProps)
+        };
+      }
+
       if (child.name.includes('Button')) {
         const buttonProps = extractButtonProps(child);
         let buttonText = '';
@@ -143,7 +154,7 @@ function extractChildContent(node: any): any[] {
         };
       }
       
-      if (child.name.includes('Input')) {
+      if (child.name.includes('input')) {
         const inputProps = extractInputProps(child);
         return { 
           type: 'Input', 
@@ -156,7 +167,7 @@ function extractChildContent(node: any): any[] {
       const stackProps = extractStackContainerProps(child);
       const stackChildren = extractChildContent(child);
       return {
-        type: 'Stack.Vertical',
+        type: 'StackContainer',
         props: Object.assign({}, stackProps),
         children: stackChildren
       };

@@ -5,7 +5,13 @@ interface FunctionProp {
   value: string;
 }
 
-type PropValue = string | number | boolean | FunctionProp;
+interface IconChild {
+  type: string;
+  name: string;
+  props: Record<string, any>;
+}
+
+type PropValue = string | number | boolean | FunctionProp | IconChild[];
 
 export interface IconButtonProps {
   sizeVar?: 'XS' | 'S' | 'M';
@@ -14,11 +20,11 @@ export interface IconButtonProps {
   color?: string;
   disabled?: boolean;
   loading?: boolean;
+  children?: IconChild[];
 }
 
 export function extractIconButtonProps(node: SceneNode): Record<string, PropValue> {
   const props: Record<string, PropValue> = {};
-  console.log("node", node)
 
   if (
     'variantProperties' in node &&
@@ -71,6 +77,15 @@ export function extractIconButtonProps(node: SceneNode): Record<string, PropValu
 
   if ('opacity' in node && node.opacity < 1) {
     props.disabled = true;
+  }
+
+  // icon 정보 추가
+  if ('children' in node && node.children && node.children.length > 0) {
+    props.children = node.children.map(child => ({
+      type: 'Icon',
+      name: child.name,
+      props: {}
+    }));
   }
 
   return props;

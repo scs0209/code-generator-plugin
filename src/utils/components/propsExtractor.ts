@@ -5,6 +5,7 @@ import { extractTextProps } from './props/textProps';
 import { extractStackContainerProps } from './props/stackContainerProps';
 import { extractModalProps } from './props/modalProps';
 import { extractButtonProps } from './props/buttonProps';
+import { extractIconButtonProps } from './props/iconButtonProps';
 
 interface FunctionProp {
   __type: 'function';
@@ -37,6 +38,8 @@ export function extractProps(
       return extractInputProps(node);
     case 'Button':
       return extractButtonProps(node);
+    case 'IconButton':
+      return extractIconButtonProps(node);
     case 'TextArea':
       return extractTextAreaProps(node);
     case 'Text':
@@ -84,6 +87,5 @@ export function extractProps(
       }
       break;
   }
-
   return props;
 }
