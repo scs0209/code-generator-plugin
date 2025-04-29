@@ -24,25 +24,35 @@ export function extractButtonProps(node: SceneNode): Record<string, PropValue> {
   const props: Record<string, PropValue> = {};
 
   // Style variant based on name
-  if (node.name.toLowerCase().includes('secondary')) {
-    props.styleVar = 'SECONDARY';
-  } else if (node.name.toLowerCase().includes('ghost')) {
-    props.styleVar = 'GHOST';
-  } else if (node.name.toLowerCase().includes('solid')) {
-    props.styleVar = 'SOLID';
-  } else {
-    props.styleVar = 'PRIMARY';
-  }
-
-  // Size variant based on height
-  if ('height' in node) {
-    const height = node.height;
-    if (height <= 32) {
+  if (
+    'variantProperties' in node &&
+    node.variantProperties &&
+    typeof node.variantProperties.styleVar === 'string'
+  ) {
+    const style = node.variantProperties.styleVar.toLowerCase();
+  
+    if (style.includes('secondary')) {
+      props.styleVar = 'SECONDARY';
+    } else if (style.includes('ghost')) {
+      props.styleVar = 'GHOST';
+    } else if (style.includes('solid')) {
+      props.styleVar = 'SOLID';
+    } else {
+      props.styleVar = 'PRIMARY';
+    }
+  
+    const size = node.variantProperties.sizeVar.toLowerCase();
+    if (size && size.includes('s')) {
       props.sizeVar = 'S';
     } else {
       props.sizeVar = 'M';
     }
+  } else {
+    props.styleVar = 'PRIMARY';
+    props.sizeVar = 'M';
   }
+  
+  
 
   if ('fills' in node && node.fills) {
     const fills = node.fills as Paint[];
