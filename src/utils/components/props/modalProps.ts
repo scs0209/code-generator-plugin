@@ -18,7 +18,7 @@ interface ModalProps {
   children: ModalChild[];
 }
 
-export function extractModalProps(node: FrameNode): ModalProps {
+export function extractModalProps(node: any): ModalProps {
   const props: ModalProps = {
     children: [],
   };

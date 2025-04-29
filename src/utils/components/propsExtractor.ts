@@ -51,7 +51,6 @@ export function extractProps(
       break;
     case 'confirm':
     case 'Modal':
-      if (node.type === 'FRAME') {
         const modalProps = extractModalProps(node) as unknown as ModalProps;
         // Modal의 children을 Header, Body, Footer 구조로 변환
         if (modalProps.children) {
@@ -80,7 +79,7 @@ export function extractProps(
             }
             return child;
           });
-        }
+        
         return modalProps;
       }
       break;
