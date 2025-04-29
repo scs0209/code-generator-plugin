@@ -22,38 +22,10 @@ interface TokensData {
   };
 }
 
-interface ComponentInfo {
-  name: string;
-  type: string;
-  props: {
-    [key: string]: {
-      type: string;
-      required: boolean;
-      description: string;
-    };
-  };
-  styles: {
-    [key: string]: string;
-  };
-  contents: {
-    [key: string]: string;
-  };
-  template: string;
-  variants: {
-    [key: string]: string;
-  };
-  requiredProps?: string[];
-}
-
-interface ComponentLibrary {
-  components: {
-    [key: string]: ComponentInfo;
-  };
-}
-
 const DefaultView = () => {
   const [output, setOutput] = useState<string>('');
   const [colorTokenMap, setColorTokenMap] = useState<ColorTokenMap>({});
+  const [copied, setCopied] = useState<boolean>(false);
 
   useEffect(() => {
     // 모든 color token을 모은다
@@ -96,6 +68,33 @@ const DefaultView = () => {
     );
   };
 
+   // ✅ 복사 핸들러
+   const handleCopy = async () => {
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(output);
+      } else {
+        // fallback 방식
+        const textarea = document.createElement('textarea');
+        textarea.value = output;
+        textarea.style.position = 'fixed'; // 화면 스크롤 방지
+        textarea.style.top = '0';
+        textarea.style.left = '0';
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+      }
+  
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('복사 실패:', err);
+    }
+  };
+  
+
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-sm p-6">
@@ -120,9 +119,10 @@ const DefaultView = () => {
                 <div className="w-3 h-3 rounded-full bg-green-500"></div>
               </span>
               <button
-                className="bg-gray-800 code hover:bg-gray-700 text-gray-300 px-3 py-1 rounded-md"
-                data-clipboard-target="#code">
-                Copy
+                onClick={handleCopy}
+                className="bg-gray-800 hover:bg-gray-700 text-gray-300 px-3 py-1 rounded-md"
+              >
+                {copied ? 'Copied!' : 'Copy'}
               </button>
               </div>
             <div className="overflow-x-auto">
