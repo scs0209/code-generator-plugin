@@ -17,11 +17,18 @@ export function matchComponent(node: SceneNode): string {
   if (node.type === 'TEXT') {
     return 'Text';
   }
-  if (node.type === 'FRAME' || name.includes('modal') || name.includes('confirm')) {
+  if (name.includes('modal') || name.includes('confirm')) {
     return 'Modal';
   }
-   // if (node.name) {
+  if (name.includes('callout')) {
+    return 'Callout';
+  }
+  if (name.includes('frame')) {
+    return 'StackContainer';
+  }
+  // if (node.name) {
   //   return normalizeComponentName(node.name);
   // }
+  console.log("name", name);
   return 'StackContainer';
 } 

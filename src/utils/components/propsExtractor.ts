@@ -6,6 +6,7 @@ import { extractStackContainerProps } from './props/stackContainerProps';
 import { extractModalProps } from './props/modalProps';
 import { extractButtonProps } from './props/buttonProps';
 import { extractIconButtonProps } from './props/iconButtonProps';
+import { extractCalloutProps } from './props/calloutProps';
 
 interface FunctionProp {
   __type: 'function';
@@ -52,6 +53,8 @@ export function extractProps(
         return extractStackContainerProps(node);
       }
       break;
+    case 'Callout':
+      return extractCalloutProps(node);
     case 'confirm':
     case 'Modal':
         const modalProps = extractModalProps(node) as unknown as ModalProps;

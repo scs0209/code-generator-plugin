@@ -4,6 +4,7 @@ import { extractTextProps } from './textProps';
 import { extractInputProps } from './inputProps';
 import { extractButtonProps } from './buttonProps';
 import { extractIconButtonProps } from './iconButtonProps';
+import { extractCalloutProps } from './calloutProps';
 
 type ModalSizeType = 'XXS' | 'XS' | 'S' | 'M' | 'L' | 'XL' | 'XXL' | 'XXXL' | 'FULL';
 
@@ -110,8 +111,6 @@ export function extractModalProps(node: any): ModalProps {
     });
   }
 
-  console.log("props", props);
-
   return props;
 }
 
@@ -159,9 +158,17 @@ function extractChildContent(node: any): any[] {
         return { 
           type: 'Input', 
           props: Object.assign({}, inputProps)
+          };
+        }
+      }
+
+      if (child.name.includes('callout')) {
+        const calloutProps = extractCalloutProps(child);
+        return {
+          type: 'Callout',
+          props: Object.assign({}, calloutProps)
         };
       }
-    }
     
     if (child.type === 'FRAME') {
       const stackProps = extractStackContainerProps(child);

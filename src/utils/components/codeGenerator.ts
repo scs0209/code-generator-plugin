@@ -50,7 +50,6 @@ function renderFromJsonNode(
   node: { type: string; props: Record<string, any>; children?: any[] },
   depth = 0
 ): string {
-  console.log("node", node);
   const indent = '  '.repeat(depth);
   const { type, props = {}, children = [] } = node;
 
@@ -67,24 +66,61 @@ function renderFromJsonNode(
     .filter(Boolean)
     .join(' ');
 
-  // Input과 TextArea만 self-closing 처리
-  if (['Input', 'TextArea'].includes(type)) {
+  // children을 props.children에서도 확인
+  const allChildren = Array.isArray(children) && children.length > 0
+    ? children
+    : Array.isArray(props.children)
+      ? props.children
+      : [];
+
+  // IconButton 특별 처리
+  if (type === 'IconButton') {
+    const iconChild = Array.isArray(props.children) ? props.children[0] : null;
+    let iconContent = '';
+    if (iconChild && iconChild.name) {
+      const iconComponentName = convertIconNameToComponentName(iconChild.name);
+      iconContent = `\n${indent}  <Icon iconSource={${iconComponentName}} />\n${indent}`;
+    }
+    return `${indent}<${type} ${propString}>${iconContent}</${type}>`;
+  }
+
+  if (type === 'Callout') {
+    const calloutChildren = Array.isArray(props.children) ? props.children : [];
+    const calloutProps = formatProps(props || {}, ['children']);
+  
+    const calloutContent = calloutChildren
+      .map((calloutChild: any) => {
+        if (calloutChild.type === 'Callout.Icon') {
+          return `${indent}      <Callout.Icon iconSource={${convertIconNameToComponentName(calloutChild.iconSource)}} />`;
+        } else if (calloutChild.type === 'Callout.Text') {
+          return `${indent}      <Callout.Text>${calloutChild.children}</Callout.Text>`;
+        }
+        return '';
+      })
+      .filter(Boolean)
+      .join('\n');
+  
+    return `${indent}    <Callout ${calloutProps}>\n${calloutContent}\n${indent}    </Callout>`;
+  }
+
+  // self-closing 처리
+  if (['Input', 'TextArea'].includes(type) && allChildren.length === 0) {
     return `${indent}<${type} ${propString} />`;
   }
 
-  if (children.length > 0) {
-    const childrenContent = children
+  // children이 있는 경우 재귀적으로 처리
+  if (allChildren.length > 0) {
+    const childrenContent = allChildren
       .map((child) => renderFromJsonNode(child, depth + 1))
       .join('\n');
     return `${indent}<${type} ${propString}>\n${childrenContent}\n${indent}</${type}>`;
   }
 
+  // 텍스트 children만 있는 경우
   const innerText = typeof props.children === 'string' ? props.children : '';
-  if (!innerText) {
-    return `${indent}<${type} ${propString}>${innerText}</${type}>`;
-  }
   return `${indent}<${type} ${propString}>${innerText}</${type}>`;
 }
+
 
 export function buildComponentRecursive(
   node: SceneNode,
@@ -94,12 +130,13 @@ export function buildComponentRecursive(
   const props = extractProps(node, componentName);
   const indent = '  '.repeat(depth);
   const propsString = formatProps(props, ['children']);
+  console.log("componentName", componentName, node.children);
 
   // Modal 컴포넌트의 경우 특별 처리
   if (componentName === 'Modal') {
     let children = '';
     if (props.children) {
-      console.log("props.children", props.children);
+      // console.log("props.children", props.children);
       children = (props.children as ModalChild[])
         .map((child) => {
           const { type, children: childChildren } = child;
@@ -108,19 +145,35 @@ export function buildComponentRecursive(
               ([key]) => key !== 'type' && key !== 'children'
             )
           );
-          console.log("childProps", childProps);
           const formattedProps = formatProps(childProps, ['children']);
           let childContent = '';
           
           if (childChildren && childChildren.length > 0) {
-            console.log("childChildren", childChildren);
             childContent = childChildren
               .map((grandChild: any) => {
                 if (typeof grandChild === 'string') {
                   return grandChild;
                 }
-                console.log("grandChild", grandChild);
                 const grandChildProps = formatProps(grandChild.props || {}, ['children']);
+
+                if (grandChild.type === 'Callout') {
+                  const calloutChildren = Array.isArray(grandChild.children) ? grandChild.children : [];
+                  const calloutProps = formatProps(grandChild.props || {}, ['children']);
+                
+                  const calloutContent = calloutChildren
+                    .map((calloutChild: any) => {
+                      if (calloutChild.type === 'Callout.Icon') {
+                        return `${indent}      <Callout.Icon iconSource={${convertIconNameToComponentName(calloutChild.iconSource)}} />`;
+                      } else if (calloutChild.type === 'Callout.Text') {
+                        return `${indent}      <Callout.Text>${calloutChild.children}</Callout.Text>`;
+                      }
+                      return '';
+                    })
+                    .filter(Boolean)
+                    .join('\n');
+                
+                  return `${indent}    <Callout ${calloutProps}>\n${calloutContent}\n${indent}    </Callout>`;
+                }
                 
                 // IconButton 특별 처리
                 if (grandChild.type === 'IconButton') {
@@ -156,6 +209,26 @@ export function buildComponentRecursive(
           
           return `${indent}  <${type} ${formattedProps}>\n${childContent}\n${indent}  </${type}>`;
         })
+        .join('\n');
+    }
+    return `${indent}<${componentName} ${propsString}>\n${children}\n${indent}</${componentName}>`;
+  }
+
+  // Callout 컴포넌트 처리
+  if (componentName === 'Callout') {
+    let children = '';
+    const calloutChildren = Array.isArray(props.children) ? props.children : [];
+    if (calloutChildren.length > 0) {
+      children = calloutChildren
+        .map((child: any) => {
+          if (child.type === 'Callout.Icon') {
+            return `${indent}  <Callout.Icon iconSource={${child.iconSource}} />`;
+          } else if (child.type === 'Callout.Text') {
+            return `${indent}  <Callout.Text>${child.children}</Callout.Text>`;
+          }
+          return '';
+        })
+        .filter(Boolean)
         .join('\n');
     }
     return `${indent}<${componentName} ${propsString}>\n${children}\n${indent}</${componentName}>`;
@@ -205,7 +278,9 @@ export function buildComponentRecursive(
         if (typeof child === 'string') {
           return child;
         }
+        console.log("child", child);
         const childProps = formatProps(child.props || {}, ['children']);
+        console.log("childProps", childProps);
         const childContent = child.props.children || '';
         
         if (child.children && child.children.length > 0) {
